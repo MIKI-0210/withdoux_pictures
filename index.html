@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sizzle Cake 🎂</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --rose: #e8546a;
+      --gold: #c9a84c;
+      --cream: #fdf6f0;
+      --dark: #1a1219;
+      --surface: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 16px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--dark);
+      letter-spacing: 0.02em;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 28px;
+      box-shadow: 0 8px 40px rgba(232, 84, 106, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 28px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--rose), var(--gold));
+    }
+
+    /* ── チェッカー背景（透過プレビュー） ── */
+    .bg-checker {
+      background-color: #f5f0eb;
+      background-image:
+        linear-gradient(45deg, #e5ddd5 25%, transparent 25%, transparent 75%, #e5ddd5 75%),
+        linear-gradient(45deg, #e5ddd5 25%, transparent 25%, transparent 75%, #e5ddd5 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    /* ── プレビューエリア ── */
+    #previewArea {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      border: 2px dashed #e0d5ce;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+
+    #previewArea img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    #previewArea .placeholder-text {
+      color: #b0a09a;
+      font-size: 0.85rem;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── プレビューラッパー（×ボタン配置用） ── */
+    .preview-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    /* × リセットボタン */
+    #resetBtn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(26, 18, 25, 0.65);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      transition: background 0.2s;
+      backdrop-filter: blur(4px);
+    }
+
+    #resetBtn:hover {
+      background: rgba(232, 84, 106, 0.85);
+    }
+
+    /* ── 比率ボタン ── */
+    .ratio-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .ratio-btn {
+      padding: 10px 6px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border: 2px solid #e8ddd8;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fff;
+      color: #7a6a65;
+    }
+
+    .ratio-btn.active {
+      background: var(--dark);
+      color: #fff;
+      border-color: var(--dark);
+    }
+
+    .ratio-btn:hover:not(.active) {
+      border-color: var(--rose);
+      color: var(--rose);
+    }
+
+    /* ── 汎用ボタン ── */
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-ghost {
+      background: #f7f1ee;
+      color: #5a4a46;
+    }
+
+    .btn-ghost:hover {
+      background: #ede4df;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--rose), #d63a57);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(232, 84, 106, 0.35);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, var(--gold), #b8923a);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.35);
+    }
+
+    .btn-download:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f0e9ff;
+      color: #6a3fa0;
+    }
+
+    .btn-secondary:hover {
+      background: #e4d7ff;
+    }
+
+    /* ── スタック ── */
+    .btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── セクション区切り ── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 22px 0 16px;
+      color: #b0a09a;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ede4df;
+    }
+
+    /* ── 背景プリセットグリッド ── */
+    .bg-presets {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .bg-preset-btn {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all 0.2s;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bg-preset-btn:hover {
+      transform: scale(1.06);
+    }
+
+    .bg-preset-btn.selected {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 2px rgba(232, 84, 106, 0.3);
+    }
+
+    .bg-preset-btn span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 0.55rem;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.45);
+      color: #fff;
+      padding: 2px 0;
+      font-weight: 700;
+    }
+
+    /* ── プリセット背景テクスチャ ── */
+    .tex-marble {
+      background: linear-gradient(135deg, #f8f5f2 0%, #e8e0d8 30%, #d0c8c0 50%, #e8e0d8 70%, #f8f5f2 100%);
+    }
+
+    .tex-wood {
+      background: linear-gradient(160deg, #a0784a 0%, #7a5a30 20%, #c09052 40%, #8a6838 60%, #b08040 80%, #7a5a30 100%);
+    }
+
+    .tex-slate {
+      background: linear-gradient(135deg, #3a3a42 0%, #4e4e58 40%, #2e2e36 70%, #4a4a52 100%);
+    }
+
+    .tex-linen {
+      background: linear-gradient(135deg, #f2e8d8 0%, #e8d8c0 40%, #f0e4cc 70%, #e4d4b8 100%);
+    }
+
+    /* ── 新規5スタイル ── */
+    .tex-pop {
+      background: linear-gradient(180deg, #FFB7C5 50%, #AED9E0 50%);
+    }
+
+    .tex-mode {
+      background: linear-gradient(135deg, #5C1A1A 0%, #8B2635 50%, #A0522D 100%);
+    }
+
+    .tex-natural {
+      background: linear-gradient(135deg, #FDFAF6 0%, #F5EDE0 50%, #EDE0CC 100%);
+    }
+
+    .tex-cinema {
+      background: linear-gradient(135deg, #3D0A14 0%, #6B1E2A 40%, #4A0F1C 100%);
+    }
+
+    .tex-topview {
+      background: linear-gradient(135deg, #E8DDD0 0%, #D6C9B8 40%, #E4D9C5 100%);
+    }
+
+    /* ── ステータスバッジ ── */
+    #statusBadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #8a7a76;
+      margin-bottom: 18px;
+    }
+
+    #statusBadge .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #c5b8b0;
+    }
+
+    #statusBadge.processing .dot {
+      background: var(--rose);
+      animation: pulse 1s infinite;
+    }
+
+    #statusBadge.done .dot {
+      background: #4caf50;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+    }
+
+    /* ── スピナー ── */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ── hidden ── */
+    .hidden {
+      display: none !important;
+    }
+
+    /* ── 複製アイテム ── */
+    .copy-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fdf7f5;
+      border: 1.5px solid #e0d5ce;
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+    }
+
+    .copy-item label {
+      font-size: 0.72rem;
+      color: #8a7a76;
+      white-space: nowrap;
+    }
+
+    .copy-item input[type="range"] {
+      flex: 1;
+      accent-color: var(--rose);
+    }
+
+    .copy-item .copy-size-val {
+      font-size: 0.7rem;
+      color: #b0a09a;
+      min-width: 32px;
+      text-align: right;
+    }
+
+    .copy-item .remove-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1.5px solid #e0d5ce;
+      background: #fff;
+      color: #b0a09a;
+      cursor: pointer;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .add-copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: none;
+      border: 1.5px dashed #e0d5ce;
+      border-radius: 12px;
+      color: #b0a09a;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .add-copy-btn:hover {
+      border-color: var(--rose);
+      color: var(--rose);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════
+       ① 背景削除カード
+  ══════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:16px;">
+
+    <!-- ヘッダー -->
+    <div style="text-align:center; margin-bottom:20px;">
+      <h1>Sizzle Cake 🎂</h1>
+      <p style="color:#b0a09a; font-size:0.8rem; margin-top:4px;">パティシエのための写真加工ツール</p>
+    </div>
+
+    <!-- ステータス -->
+    <div id="statusBadge">
+      <span class="dot"></span>
+      <span id="statusText">お菓子の写真を選択してください</span>
+    </div>
+
+    <!-- セクションラベル -->
+    <div class="section-divider">① 背景削除</div>
+
+    <!-- プレビュー -->
+    <div class="preview-wrapper">
+      <div id="previewArea" class="bg-checker">
+        <div class="placeholder-text">
+          <span style="font-size:2rem">🎂</span>
+          <span>ここに画像が表示されます</span>
+        </div>
+      </div>
+      <button id="resetBtn" class="hidden" onclick="resetAll()" title="画像をリセット">×</button>
+    </div>
+
+    <!-- 比率選択 -->
+    <div class="ratio-group">
+      <button class="ratio-btn active" onclick="setRatio('1:1', this)">
+        <div style="margin-bottom:4px">◻</div>1:1
+        <div style="font-size:0.65rem;font-weight:400;color:inherit;opacity:0.7">フィード</div>
+      </button>
+      <button class="ratio-btn" onclick="setRatio('4:5', this)">
+        <div style="margin-bottom:4px">▯</div>4:5
+        <div style="font-size:0.65rem;font-weight:400;color:inherit;opacity:0.7">推奨</div>
+      </button>
+      <button class="ratio-btn" onclick="setRatio('16:9', this)">
+        <div style="margin-bottom:4px">▭</div>16:9
+        <div style="font-size:0.65rem;font-weight:400;color:inherit;opacity:0.7">横長</div>
+      </button>
+    </div>
+
+    <!-- ファイル入力（隠し） -->
+    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFile(this)">
+    <input type="file" id="bgFileInput" accept="image/*" class="hidden" onchange="handleBgFile(this)">
+
+    <!-- ① のボタン群 -->
+    <div class="btn-stack">
+      <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">
+        📷 写真を選択
+      </button>
+      <button id="magicBtn" class="btn btn-primary hidden" onclick="runMagic()">
+        ✨ 魔法をかける（背景削除）
+      </button>
+      <!-- 背景削除済み画像の保存 -->
+      <button id="downloadBtn" class="btn btn-download hidden" onclick="downloadImage()">
+        💾 背景削除した画像を保存
+      </button>
+    </div>
+
+    <p style="text-align:center; color:#c5b8b0; font-size:0.7rem; margin-top:20px;">
+      Powered by Cloudinary AI
+    </p>
+  </div><!-- /card① -->
+
+
+  <!-- ══════════════════════════════════════
+       ② 背景合成カード（背景削除後に表示）
+  ══════════════════════════════════════ -->
+  <div id="compositeSection" class="card hidden">
+
+    <div class="section-divider">② 背景合成</div>
+
+    <!-- 背景プリセット選択 -->
+    <div class="bg-presets">
+      <div class="bg-preset-btn tex-marble selected" onclick="selectBgPreset(this, 'marble')" title="大理石">
+        <span>大理石</span>
+      </div>
+      <div class="bg-preset-btn tex-wood" onclick="selectBgPreset(this, 'wood')" title="木目">
+        <span>木目</span>
+      </div>
+      <div class="bg-preset-btn tex-slate" onclick="selectBgPreset(this, 'slate')" title="スレート">
+        <span>スレート</span>
+      </div>
+      <div class="bg-preset-btn tex-linen" onclick="selectBgPreset(this, 'linen')" title="リネン">
+        <span>リネン</span>
+      </div>
+      <div class="bg-preset-btn tex-pop" onclick="selectBgPreset(this, 'pop')" title="ポップ&シュール">
+        <span>ポップ</span>
+      </div>
+      <div class="bg-preset-btn tex-mode" onclick="selectBgPreset(this, 'mode')" title="エレガント・モード">
+        <span>モード</span>
+      </div>
+      <div class="bg-preset-btn tex-natural" onclick="selectBgPreset(this, 'natural')" title="ナチュラル・クリーン">
+        <span>ナチュラル</span>
+      </div>
+      <div class="bg-preset-btn tex-cinema" onclick="selectBgPreset(this, 'cinema')" title="シネマティック・ダーク">
+        <span>シネマ</span>
+      </div>
+      <div class="bg-preset-btn tex-topview" onclick="selectBgPreset(this, 'topview')" title="ミニマル・トップビュー">
+        <span>トップ</span>
+      </div>
+    </div>
+
+    <!-- 位置・サイズ調整エディタ -->
+    <div class="section-divider">位置・サイズを調整</div>
+
+    <div id="compositeEditor" style="position:relative; width:100%; aspect-ratio:1/1;
+             overflow:hidden; border-radius:14px;
+             border:2px solid #e0d5ce;
+             touch-action:none; user-select:none; cursor:grab;
+             background:#f0ece6;">
+      <img id="fgEditorImg" src="" alt="" style="position:absolute; left:50%; top:50%;
+               max-width:80%; max-height:80%;
+               transform:translate(-50%,-50%);
+               transform-origin:left top;
+               pointer-events:none;" />
+    </div>
+
+    <!-- スケールコントロール -->
+    <div style="display:flex; align-items:center; gap:10px; margin:10px 0 4px;">
+      <button onclick="adjustScale(-0.1)" style="width:38px;height:38px;border-radius:50%;border:2px solid #e8ddd8;
+               background:#fff;font-size:1.3rem;cursor:pointer;color:#5a4a46;flex-shrink:0;">
+        &#x2212;
+      </button>
+      <input type="range" id="scaleRange" min="20" max="250" value="100" oninput="setScaleFromSlider(this.value)"
+        style="flex:1; accent-color:var(--rose);" />
+      <button onclick="adjustScale(0.1)" style="width:38px;height:38px;border-radius:50%;border:2px solid #e8ddd8;
+               background:#fff;font-size:1.3rem;cursor:pointer;color:#5a4a46;flex-shrink:0;">
+        &#xFF0B;
+      </button>
+    </div>
+    <button onclick="resetEditorTransform()" style="width:100%;font-size:0.72rem;color:#b0a09a;background:none;
+             border:none;cursor:pointer;margin-bottom:10px;">
+      &#x21A9; 配置をリセット
+    </button>
+
+    <!-- 複製リスト -->
+    <div id="copiesList"></div>
+    <button id="addCopyBtn" class="add-copy-btn hidden" onclick="addCopy()">
+      ＋ 複製を追加
+    </button>
+
+    <!-- 保存ボタン -->
+    <div class="btn-stack">
+      <button id="compositeBtn" class="btn btn-download" onclick="runComposite()">
+        💾 保存する
+      </button>
+    </div>
+
+    <!-- 合成結果プレビュー（合成後に表示） -->
+    <div id="compositeResultArea" class="hidden">
+      <div class="section-divider">合成結果</div>
+      <img id="compositeResultImg" src="" alt="合成結果" style="width:100%; border-radius:14px; border:2px solid #e0d5ce;
+               display:block; margin-bottom:12px;" />
+      <button class="btn btn-download" onclick="reDownloadComposite()">
+        💾 もう一度ダウンロード
+      </button>
+    </div>
+
+  </div><!-- /card② -->
+
+
+  <script>
+    // ── 状態変数 ─────────────────────────────
+    let base64Image = '';
+    let selectedRatio = '1:1';
+    let processedUrl = '';  // 背景削除済み画像URL
+    let compositeDataUrl = ''; // 合成済み画像 dataUrl
+    let fgPublicId = '';
+    let selectedBgType = 'marble';
+    let customBgPublicId = '';
+
+    // エディタ状態
+    let fgEditorX = 0;
+    let fgEditorY = 0;
+    let fgEditorScale = 1.0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let pinchStartDist = 0;
+    let pinchStartScale = 1.0;
+
+    // 複製リスト [{scale: 0.5}, ...]
+    let copies = [];
+
+    // 複製自動配置オフセット（キャンバス対比）
+    const COPY_OFFSETS = [
+      { dx: 0.15, dy: 0.10 },
+      { dx: -0.12, dy: 0.18 },
+      { dx: 0.06, dy: -0.16 },
+    ];
+
+    // 背景プリセット色マッピング（Cloudinary b_rgb: 用）
+    const BG_PRESETS = {
+      marble: { color: 'f0ece6', label: '大理石' },
+      wood: { color: '6b3d1e', label: '木目' },
+      slate: { color: '2e2e36', label: 'スレート' },
+      linen: { color: 'f2e4cc', label: 'リネン' },
+      pop: { color: 'ffb7c5', label: 'ポップ' },
+      mode: { color: '8b2635', label: 'モード' },
+      natural: { color: 'fdfaf6', label: 'ナチュラル' },
+      cinema: { color: '6b1e2a', label: 'シネマ' },
+      topview: { color: 'e8ddd0', label: 'トップ' },
+    };
+
+    // ── ステータス ────────────────────────────
+    function setStatus(text, mode = '') {
+      const badge = document.getElementById('statusBadge');
+      document.getElementById('statusText').textContent = text;
+      badge.className = mode ? `statusBadge ${mode}` : 'statusBadge';
+      badge.style.display = 'inline-flex';
+    }
+
+    // ── 比率選択 ──────────────────────────────
+    function setRatio(r, btn) {
+      selectedRatio = r;
+      document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // ── 商品画像の選択 ────────────────────────
+    function handleFile(input) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        base64Image = e.target.result;
+        showPreview(base64Image);
+        show('resetBtn');
+        show('magicBtn');
+        document.getElementById('magicBtn').innerHTML = '✨ 魔法をかける（背景削除）';
+        document.getElementById('magicBtn').disabled = false;
+        hide('downloadBtn');
+        hide('compositeSection');
+        hide('addCopyBtn');
+        copies = []; renderCopiesList();
+        processedUrl = '';
+        fgPublicId = '';
+        setStatus('準備完了！「魔法をかける」を押してください', '');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    // ── 全リセット ───────────────────────────
+    function resetAll() {
+      base64Image = ''; processedUrl = ''; compositeDataUrl = '';
+      fgPublicId = ''; customBgPublicId = '';
+      document.getElementById('previewArea').innerHTML =
+        `<div class="placeholder-text">
+           <span style="font-size:2rem">🎂</span>
+           <span>ここに画像が表示されます</span>
+         </div>`;
+      document.getElementById('fileInput').value = '';
+      hide('resetBtn'); hide('magicBtn');
+      hide('downloadBtn'); hide('compositeSection');
+      hide('addCopyBtn');
+      copies = []; renderCopiesList();
+      setStatus('お菓子の写真を選択してください', '');
+    }
+
+    // ── 背景削除 ─────────────────────────────
+    function runMagic() {
+      const btn = document.getElementById('magicBtn');
+      setStatus('背景を削除中…', 'processing');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> 処理中…（10〜30秒）';
+
+      google.script.run
+        .withSuccessHandler(result => {
+          btn.disabled = false;
+          btn.innerHTML = '✨ 魔法をかける（背景削除）';
+          if (!result.success) {
+            alert('❌ エラー: ' + result.error);
+            setStatus('エラーが発生しました', '');
+            return;
+          }
+          processedUrl = result.url;
+          fgPublicId = result.publicId;
+          showPreview(result.url);
+          setStatus('完成！🎉 保存または下の背景合成へ', 'done');
+          show('downloadBtn');
+          show('compositeSection');
+          show('addCopyBtn');
+          hide('magicBtn');
+          // エディタを初期化
+          initEditor(result.url, BG_PRESETS[selectedBgType].color);
+          // 合成セクションまでスクロール
+          document.getElementById('compositeSection')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.innerHTML = '✨ 魔法をかける（背景削除）';
+          alert('❌ GASエラー: ' + err.message);
+          setStatus('エラーが発生しました', '');
+        })
+        .mainProcess({ image: base64Image, ratio: selectedRatio });
+    }
+
+    // ── ダウンロード（背景削除済み）────────────
+    function downloadImage() {
+      if (!processedUrl) return;
+      setStatus('ダウンロード準備中…', 'processing');
+      google.script.run
+        .withSuccessHandler(result => {
+          if (!result.success) {
+            alert('❌ ダウンロードエラー: ' + result.error);
+            setStatus('ダウンロード失敗', '');
+            return;
+          }
+          const a = document.createElement('a');
+          a.href = result.dataUrl;
+          a.download = `sizzle_cake_${Date.now()}.png`;
+          a.click();
+          setStatus('ダウンロード完了 ✅', 'done');
+        })
+        .withFailureHandler(err => {
+          alert('❌ GASエラー: ' + err.message);
+          setStatus('ダウンロード失敗', '');
+        })
+        .fetchImageAsBase64(processedUrl);
+    }
+
+    // ── ダウンロード（合成済み）──────────────
+    function downloadComposite() {
+      if (!compositeDataUrl) return;
+      const a = document.createElement('a');
+      a.href = compositeDataUrl;
+      a.download = `sizzle_composite_${Date.now()}.png`;
+      a.click();
+    }
+
+    // ── 背景プリセット選択 ───────────────────
+    function selectBgPreset(el, type) {
+      document.querySelectorAll('.bg-preset-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedBgType = type;
+      customBgPublicId = '';
+      const editor = document.getElementById('compositeEditor');
+      if (editor) editor.style.background = '#' + BG_PRESETS[type].color;
+    }
+
+    // ── カスタム背景アップロード ─────────────
+    function handleBgFile(input) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setStatus('背景画像をアップロード中…', 'processing');
+        google.script.run
+          .withSuccessHandler(result => {
+            if (!result.success) {
+              alert('❌ 背景アップロードエラー: ' + result.error);
+              setStatus('アップロード失敗', '');
+              return;
+            }
+            customBgPublicId = result.publicId;
+            document.querySelectorAll('.bg-preset-btn').forEach(b => b.classList.remove('selected'));
+            setStatus('背景画像の準備完了 ✅', 'done');
+          })
+          .withFailureHandler(err => {
+            alert('❌ GASエラー: ' + err.message);
+            setStatus('アップロード失敗', '');
+          })
+          .uploadBackground({ image: e.target.result });
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+
+    // ── インタラクティブエディタ ─────────────
+    function initEditor(imageUrl, bgColor) {
+      fgEditorX = 0; fgEditorY = 0; fgEditorScale = 1.0;
+      document.getElementById('scaleRange').value = 100;
+      const editor = document.getElementById('compositeEditor');
+      editor.style.background = '#' + bgColor;
+      document.getElementById('fgEditorImg').src = imageUrl;
+      updateEditorTransform();
+    }
+
+    function updateEditorTransform() {
+      const img = document.getElementById('fgEditorImg');
+      img.style.transform =
+        `translate(calc(-50% + ${fgEditorX}px), calc(-50% + ${fgEditorY}px)) scale(${fgEditorScale})`;
+    }
+
+    function adjustScale(delta) {
+      fgEditorScale = Math.min(3.0, Math.max(0.1, fgEditorScale + delta));
+      document.getElementById('scaleRange').value = Math.round(fgEditorScale * 100);
+      updateEditorTransform();
+    }
+
+    function setScaleFromSlider(val) {
+      fgEditorScale = val / 100;
+      updateEditorTransform();
+    }
+
+    function resetEditorTransform() {
+      fgEditorX = 0; fgEditorY = 0; fgEditorScale = 1.0;
+      document.getElementById('scaleRange').value = 100;
+      updateEditorTransform();
+    }
+
+    // ── ドラッグ＆ピンチイベント ──────────────
+    (function attachEditorEvents() {
+      const editor = document.getElementById('compositeEditor');
+      if (!editor) return;
+
+      // マウスドラッグ
+      editor.addEventListener('mousedown', e => {
+        isDragging = true;
+        dragStartX = e.clientX - fgEditorX;
+        dragStartY = e.clientY - fgEditorY;
+        editor.style.cursor = 'grabbing';
+      });
+      document.addEventListener('mousemove', e => {
+        if (!isDragging) return;
+        fgEditorX = e.clientX - dragStartX;
+        fgEditorY = e.clientY - dragStartY;
+        updateEditorTransform();
+      });
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        editor.style.cursor = 'grab';
+      });
+
+      // タッチ（1本指ドラッグ・2本指ピンチ）
+      editor.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          dragStartX = e.touches[0].clientX - fgEditorX;
+          dragStartY = e.touches[0].clientY - fgEditorY;
+        } else if (e.touches.length === 2) {
+          isDragging = false;
+          pinchStartDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          pinchStartScale = fgEditorScale;
+        }
+        e.preventDefault();
+      }, { passive: false });
+
+      editor.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (e.touches.length === 1 && isDragging) {
+          fgEditorX = e.touches[0].clientX - dragStartX;
+          fgEditorY = e.touches[0].clientY - dragStartY;
+          updateEditorTransform();
+        } else if (e.touches.length === 2) {
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          fgEditorScale = Math.min(3.0, Math.max(0.1, pinchStartScale * dist / pinchStartDist));
+          document.getElementById('scaleRange').value = Math.round(fgEditorScale * 100);
+          updateEditorTransform();
+        }
+      }, { passive: false });
+
+      editor.addEventListener('touchend', () => { isDragging = false; });
+    })();
+
+    // ── 背景合成 ─────────────────────────
+    function runComposite() {
+      if (!fgPublicId) {
+        alert('先に背景削除を実行してください。');
+        return;
+      }
+      const btn = document.getElementById('compositeBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> 合成・保存中…';
+      setStatus('合成中…', 'processing');
+
+      // エディタ座標 → Cloudinary ピクセルに変換
+      let imgW, imgH;
+      if (selectedRatio === '1:1') { imgW = 1000; imgH = 1000; }
+      else if (selectedRatio === '4:5') { imgW = 800; imgH = 1000; }
+      else { imgW = 1600; imgH = 900; }
+
+      const editorRect = document.getElementById('compositeEditor').getBoundingClientRect();
+      const cloudX = Math.round(fgEditorX / editorRect.width * imgW);
+      const cloudY = Math.round(fgEditorY / editorRect.height * imgH);
+
+      // 複製の自動配置を計算
+      const copiesData = copies.map((copy, i) => {
+        const off = COPY_OFFSETS[i % COPY_OFFSETS.length];
+        return {
+          scale: copy.scale,
+          x: Math.round(cloudX + off.dx * imgW),
+          y: Math.round(cloudY + off.dy * imgH),
+        };
+      });
+
+      const compositeData = customBgPublicId
+        ? {
+          fgPublicId, bgType: 'custom', bgPublicId: customBgPublicId,
+          ratio: selectedRatio, scale: fgEditorScale, x: cloudX, y: cloudY,
+          copies: copiesData,
+        }
+        : {
+          fgPublicId, bgType: 'preset', bgColor: BG_PRESETS[selectedBgType].color,
+          ratio: selectedRatio, scale: fgEditorScale, x: cloudX, y: cloudY,
+          copies: copiesData,
+        };
+
+      google.script.run
+        .withSuccessHandler(result => {
+          btn.disabled = false;
+          btn.innerHTML = '💾 保存する';
+          if (!result.success) {
+            alert('❌ 合成エラー: ' + result.error);
+            setStatus('合成失敗', '');
+            return;
+          }
+          // 合成結果をプレビューに表示
+          compositeDataUrl = result.dataUrl || result.url;
+          document.getElementById('compositeResultImg').src = compositeDataUrl;
+          show('compositeResultArea');
+          // 自動ダウンロード
+          const a = document.createElement('a');
+          a.href = compositeDataUrl;
+          a.download = 'sizzle_composite_' + Date.now() + '.png';
+          a.click();
+          setStatus('保存しました！🎉', 'done');
+          document.getElementById('compositeResultArea')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .withFailureHandler(err => {
+          btn.disabled = false;
+          btn.innerHTML = '💾 保存する';
+          alert('❌ GASエラー: ' + err.message);
+          setStatus('合成失敗', '');
+        })
+        .compositeProcess(compositeData);
+    }
+
+    // ── 複製管理 ─────────────────────────
+    function addCopy() {
+      if (copies.length >= 3) {
+        alert('複製は最大3個まで追加できます。');
+        return;
+      }
+      copies.push({ scale: 0.5 });
+      renderCopiesList();
+    }
+
+    function removeCopy(idx) {
+      copies.splice(idx, 1);
+      renderCopiesList();
+    }
+
+    function setCopyScale(idx, val) {
+      copies[idx].scale = val / 100;
+      // 数値表示だけ更新（再レンダリングしない）
+      const valEl = document.getElementById('copyVal' + idx);
+      if (valEl) valEl.textContent = val + '%';
+    }
+
+    function renderCopiesList() {
+      const list = document.getElementById('copiesList');
+      if (!list) return;
+      list.innerHTML = copies.map((copy, i) => {
+        const pct = Math.round(copy.scale * 100);
+        return `<div class="copy-item">
+          <label>複製 ${i + 1}　サイズ:</label>
+          <input type="range" min="10" max="150" value="${pct}"
+            oninput="setCopyScale(${i}, this.value)"
+            style="flex:1; accent-color:var(--rose);" />
+          <span id="copyVal${i}" class="copy-size-val">${pct}%</span>
+          <button class="remove-btn" onclick="removeCopy(${i})">&#x2715;</button>
+        </div>`;
+      }).join('');
+    }
+
+    // ── ユーティリティ ────────────────────────
+    function showPreview(src) {
+      document.getElementById('previewArea').innerHTML =
+        `<img src="${src}" alt="プレビュー">`;
+    }
+
+    function reDownloadComposite() {
+      if (!compositeDataUrl) return;
+      const a = document.createElement('a');
+      a.href = compositeDataUrl;
+      a.download = 'sizzle_composite_' + Date.now() + '.png';
+      a.click();
+    }
+
+    function show(id) { document.getElementById(id).classList.remove('hidden'); }
+    function hide(id) { document.getElementById(id).classList.add('hidden'); }
+  </script>
+</body>
+
+</html>

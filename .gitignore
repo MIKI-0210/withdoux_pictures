@@ -1,0 +1,14 @@
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+
+# clasp credentials (login token - stored globally, not here)
+# .clasp.json は scriptId を含むが公開しても安全
+# APIキーはGASプロパティに保存されているためここには含まれない
