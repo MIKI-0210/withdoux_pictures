@@ -129,8 +129,7 @@
 
     .genre-tabs {
       display: flex; gap: 6px; margin-bottom: 12px;
-      overflow-x: auto; padding-bottom: 2px;
-      scrollbar-width: none;
+      overflow-x: auto; padding-bottom: 2px; scrollbar-width: none;
     }
     .genre-tabs::-webkit-scrollbar { display: none; }
     .genre-tab {
@@ -144,8 +143,7 @@
 
     .preset-scroll {
       display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
-      margin-bottom: 14px; scrollbar-width: thin;
-      scrollbar-color: #e0d5ce transparent;
+      margin-bottom: 14px; scrollbar-width: thin; scrollbar-color: #e0d5ce transparent;
     }
     .preset-scroll::-webkit-scrollbar { height: 4px; }
     .preset-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -155,14 +153,10 @@
       flex-shrink: 0; width: 76px; height: 76px;
       border-radius: 12px; border: 3px solid transparent;
       background-size: cover; background-position: center;
-      cursor: pointer; transition: all 0.2s;
-      background-color: #f0ece6;
+      cursor: pointer; transition: all 0.2s; background-color: #f0ece6;
     }
     .preset-img-btn:hover { transform: scale(1.06); }
-    .preset-img-btn.selected {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 2px rgba(232,84,106,0.3);
-    }
+    .preset-img-btn.selected { border-color: var(--rose); box-shadow: 0 0 0 2px rgba(232,84,106,0.3); }
 
     #statusBadge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -209,7 +203,6 @@
 </head>
 <body>
 
-  <!-- ① 背景削除カード -->
   <div class="card" style="margin-bottom:16px;">
     <div style="text-align:center; margin-bottom:20px;">
       <h1>withdoux picture</h1>
@@ -259,7 +252,6 @@
     <p style="text-align:center; color:#c5b8b0; font-size:0.7rem; margin-top:20px;">Powered by AI Background Removal（無制限・無料）</p>
   </div>
 
-  <!-- ② 背景合成カード -->
   <div id="compositeSection" class="card hidden">
     <div class="section-divider">② 背景合成</div>
 
@@ -309,15 +301,16 @@
     </div>
   </div>
 
-  <script>
-    const BASE = 'https://raw.githubusercontent.com/MIKI-0210/withdoux_pictures/main/%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E7%94%BB%E5%83%8F/';
+  <script type="module">
+    const CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/';
 
+    const BASE = 'https://raw.githubusercontent.com/MIKI-0210/withdoux_pictures/main/%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E7%94%BB%E5%83%8F/';
     const PRESET_GENRES = {
-      simple:   { label: 'シンプル',  images: [BASE+'Image%20(1).png', BASE+'%E5%8F%82%E8%80%83%E2%91%A3.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A0.jpg', BASE+'Image%2038.png'] },
-      table:    { label: 'テーブル',  images: [BASE+'Image%206.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A0.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A2.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A4.png'] },
-      magazine: { label: '雑誌風',    images: [BASE+'%E5%8F%82%E8%80%83%E2%91%A4.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A2.jpg', BASE+'Image.png'] },
-      pop:      { label: 'ポップ',    images: [BASE+'Image%2016.png', BASE+'Image%2034.png'] },
-      classic:  { label: 'クラシカル', images: [BASE+'Image%2077.png', BASE+'Image%2080.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg'] },
+      simple:   { images: [BASE+'Image%20(1).png', BASE+'%E5%8F%82%E8%80%83%E2%91%A3.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A0.jpg', BASE+'Image%2038.png'] },
+      table:    { images: [BASE+'Image%206.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A0.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A2.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A4.png'] },
+      magazine: { images: [BASE+'%E5%8F%82%E8%80%83%E2%91%A4.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A2.jpg', BASE+'Image.png'] },
+      pop:      { images: [BASE+'Image%2016.png', BASE+'Image%2034.png'] },
+      classic:  { images: [BASE+'Image%2077.png', BASE+'Image%2080.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg'] },
     };
 
     let base64Image = '', selectedRatio = '1:1', processedBlobUrl = '', compositeDataUrl = '';
@@ -328,44 +321,34 @@
     let copies = [];
     const COPY_OFFSETS = [{dx:0.15,dy:0.10},{dx:-0.12,dy:0.18},{dx:0.06,dy:-0.16}];
 
-    function selectGenre(btn, genre) {
+    // グローバルに公開（HTML onclick属性から呼ぶため）
+    window.selectGenre = (btn, genre) => {
       document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       customBgUrl = '';
       renderPresetImages(genre);
-    }
-
-    function renderPresetImages(genre) {
-      const scroll = document.getElementById('presetScroll');
-      const images = PRESET_GENRES[genre].images;
-      scroll.innerHTML = images.map((url, i) =>
-        `<div class="preset-img-btn${i===0?' selected':''}" style="background-image:url(${url})" onclick="selectPresetImage(this,'${url}')"></div>`
-      ).join('');
-      selectPresetImage(scroll.firstElementChild, images[0]);
-    }
-
-    function selectPresetImage(el, url) {
+    };
+    window.selectPresetImage = (el, url) => {
       document.querySelectorAll('.preset-img-btn').forEach(b => b.classList.remove('selected'));
       if (el) el.classList.add('selected');
-      selectedBgImageUrl = url;
-      customBgUrl = '';
+      selectedBgImageUrl = url; customBgUrl = '';
       updateEditorBg(url);
-    }
-
-    function setStatus(text, mode='') {
-      const badge = document.getElementById('statusBadge');
-      document.getElementById('statusText').textContent = text;
-      badge.className = mode ? `statusBadge ${mode}` : 'statusBadge';
-      badge.style.display = 'inline-flex';
-    }
-
-    function setRatio(r, btn) {
+    };
+    window.setRatio = (r, btn) => {
       selectedRatio = r;
       document.querySelectorAll('.ratio-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-    }
-
-    function handleFile(input) {
+    };
+    window.resetAll = () => {
+      base64Image=''; processedBlobUrl=''; compositeDataUrl=''; customBgUrl=''; selectedBgImageUrl='';
+      document.getElementById('previewArea').innerHTML =
+        `<div class="placeholder-text"><span style="font-size:2rem">🎂</span><span>ここに画像が表示されます</span></div>`;
+      document.getElementById('fileInput').value = '';
+      hide('resetBtn'); hide('magicBtn'); hide('downloadBtn'); hide('compositeSection'); hide('addCopyBtn');
+      copies=[]; renderCopiesList();
+      setStatus('お菓子の写真を選択してください','');
+    };
+    window.handleFile = (input) => {
       if (!input.files || !input.files[0]) return;
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -375,162 +358,65 @@
         document.getElementById('magicBtn').innerHTML = '✨ 魔法をかける（背景削除）';
         document.getElementById('magicBtn').disabled = false;
         hide('downloadBtn'); hide('compositeSection'); hide('addCopyBtn');
-        copies = []; renderCopiesList();
-        processedBlobUrl = '';
-        setStatus('準備完了！「魔法をかける」を押してください', '');
+        copies=[]; renderCopiesList(); processedBlobUrl='';
+        setStatus('準備完了！「魔法をかける」を押してください','');
       };
       reader.readAsDataURL(input.files[0]);
-    }
-
-    function resetAll() {
-      base64Image=''; processedBlobUrl=''; compositeDataUrl='';
-      customBgUrl=''; selectedBgImageUrl='';
-      document.getElementById('previewArea').innerHTML =
-        `<div class="placeholder-text"><span style="font-size:2rem">🎂</span><span>ここに画像が表示されます</span></div>`;
-      document.getElementById('fileInput').value = '';
-      hide('resetBtn'); hide('magicBtn'); hide('downloadBtn'); hide('compositeSection'); hide('addCopyBtn');
-      copies=[]; renderCopiesList();
-      setStatus('お菓子の写真を選択してください','');
-    }
-
-    async function runMagic() {
-      const btn = document.getElementById('magicBtn');
-      setStatus('背景を削除中…（初回はAIモデルのDLで少し時間がかかります）','processing');
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div> AI処理中…';
-
-      try {
-        const { removeBackground } = await import(
-          'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/background-removal.js'
-        );
-
-        const res = await fetch(base64Image);
-        const blob = await res.blob();
-
-        const resultBlob = await removeBackground(blob, {
-          publicPath: 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/',
-        });
-
-        // 古いBlobURLを解放
-        if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
-        processedBlobUrl = URL.createObjectURL(resultBlob);
-
-        showPreview(processedBlobUrl);
-        setStatus('完成！🎉 保存または下の背景合成へ','done');
-        show('downloadBtn'); show('compositeSection'); show('addCopyBtn');
-        hide('magicBtn');
-        renderPresetImages('simple');
-        initEditor(processedBlobUrl);
-        document.getElementById('compositeSection').scrollIntoView({behavior:'smooth',block:'start'});
-
-      } catch(e) {
-        alert('❌ エラー: ' + e.message);
-        setStatus('エラーが発生しました','');
-      }
-
-      btn.disabled = false;
-      btn.innerHTML = '✨ 魔法をかける（背景削除）';
-    }
-
-    function downloadImage() {
-      if (!processedBlobUrl) return;
-      const a = document.createElement('a');
-      a.href = processedBlobUrl;
-      a.download = `withdoux_${Date.now()}.png`;
-      a.click();
-      setStatus('ダウンロード完了 ✅','done');
-    }
-
-    function handleBgFile(input) {
+    };
+    window.handleBgFile = (input) => {
       if (!input.files || !input.files[0]) return;
       const reader = new FileReader();
       reader.onload = (e) => {
-        customBgUrl = e.target.result;
-        selectedBgImageUrl = '';
+        customBgUrl = e.target.result; selectedBgImageUrl = '';
         document.querySelectorAll('.preset-img-btn').forEach(b => b.classList.remove('selected'));
         updateEditorBg(customBgUrl);
         setStatus('背景画像の準備完了 ✅','done');
       };
       reader.readAsDataURL(input.files[0]);
-    }
-
-    function updateEditorBg(url) {
-      const editor = document.getElementById('compositeEditor');
-      if (url) {
-        editor.style.backgroundImage = `url(${url})`;
-        editor.style.backgroundSize = 'cover';
-        editor.style.backgroundPosition = 'center';
-        editor.style.backgroundColor = '';
-      } else {
-        editor.style.backgroundImage = '';
-        editor.style.backgroundColor = '#f0ece6';
+    };
+    window.runMagic = async () => {
+      const btn = document.getElementById('magicBtn');
+      setStatus('背景を削除中…（初回はAIモデルのDLで少し時間がかかります）','processing');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> AI処理中…';
+      try {
+        const { removeBackground } = await import(CDN + 'index.mjs');
+        const res = await fetch(base64Image);
+        const blob = await res.blob();
+        const resultBlob = await removeBackground(blob, { publicPath: CDN });
+        if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
+        processedBlobUrl = URL.createObjectURL(resultBlob);
+        showPreview(processedBlobUrl);
+        setStatus('完成！🎉 保存または下の背景合成へ','done');
+        show('downloadBtn'); show('compositeSection'); show('addCopyBtn'); hide('magicBtn');
+        renderPresetImages('simple');
+        initEditor(processedBlobUrl);
+        document.getElementById('compositeSection').scrollIntoView({behavior:'smooth',block:'start'});
+      } catch(e) {
+        alert('❌ エラー: ' + e.message);
+        setStatus('エラーが発生しました','');
       }
-    }
-
-    function initEditor(fgImageUrl) {
-      fgEditorX=0; fgEditorY=0; fgEditorScale=1.0;
-      document.getElementById('scaleRange').value=100;
-      document.getElementById('fgEditorImg').src=fgImageUrl;
-      updateEditorBg(customBgUrl||selectedBgImageUrl);
-      updateEditorTransform();
-    }
-
-    function updateEditorTransform() {
-      document.getElementById('fgEditorImg').style.transform =
-        `translate(calc(-50% + ${fgEditorX}px), calc(-50% + ${fgEditorY}px)) scale(${fgEditorScale})`;
-    }
-
-    function adjustScale(delta) {
+      btn.disabled = false;
+      btn.innerHTML = '✨ 魔法をかける（背景削除）';
+    };
+    window.downloadImage = () => {
+      if (!processedBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = processedBlobUrl; a.download = `withdoux_${Date.now()}.png`; a.click();
+      setStatus('ダウンロード完了 ✅','done');
+    };
+    window.adjustScale = (delta) => {
       fgEditorScale = Math.min(3.0, Math.max(0.1, fgEditorScale+delta));
       document.getElementById('scaleRange').value = Math.round(fgEditorScale*100);
       updateEditorTransform();
-    }
-    function setScaleFromSlider(val) { fgEditorScale=val/100; updateEditorTransform(); }
-    function resetEditorTransform() {
+    };
+    window.setScaleFromSlider = (val) => { fgEditorScale=val/100; updateEditorTransform(); };
+    window.resetEditorTransform = () => {
       fgEditorX=0; fgEditorY=0; fgEditorScale=1.0;
       document.getElementById('scaleRange').value=100;
       updateEditorTransform();
-    }
-
-    (function() {
-      const editor = document.getElementById('compositeEditor');
-      if (!editor) return;
-      editor.addEventListener('mousedown', e => {
-        isDragging=true; dragStartX=e.clientX-fgEditorX; dragStartY=e.clientY-fgEditorY;
-        editor.style.cursor='grabbing';
-      });
-      document.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        fgEditorX=e.clientX-dragStartX; fgEditorY=e.clientY-dragStartY;
-        updateEditorTransform();
-      });
-      document.addEventListener('mouseup', () => { isDragging=false; editor.style.cursor='grab'; });
-      editor.addEventListener('touchstart', e => {
-        if (e.touches.length===1) {
-          isDragging=true; dragStartX=e.touches[0].clientX-fgEditorX; dragStartY=e.touches[0].clientY-fgEditorY;
-        } else if (e.touches.length===2) {
-          isDragging=false;
-          pinchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
-          pinchStartScale=fgEditorScale;
-        }
-        e.preventDefault();
-      },{passive:false});
-      editor.addEventListener('touchmove', e => {
-        e.preventDefault();
-        if (e.touches.length===1&&isDragging) {
-          fgEditorX=e.touches[0].clientX-dragStartX; fgEditorY=e.touches[0].clientY-dragStartY;
-          updateEditorTransform();
-        } else if (e.touches.length===2) {
-          const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
-          fgEditorScale=Math.min(3.0,Math.max(0.1,pinchStartScale*dist/pinchStartDist));
-          document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);
-          updateEditorTransform();
-        }
-      },{passive:false});
-      editor.addEventListener('touchend', ()=>{ isDragging=false; });
-    })();
-
-    async function runComposite() {
+    };
+    window.runComposite = async () => {
       if (!processedBlobUrl) { alert('先に背景削除を実行してください。'); return; }
       const bgUrl = customBgUrl||selectedBgImageUrl;
       if (!bgUrl) { alert('背景を選択してください。'); return; }
@@ -571,6 +457,58 @@
         document.getElementById('compositeResultArea').scrollIntoView({behavior:'smooth',block:'start'});
       } catch(e) { alert('❌ 合成エラー: '+e.message); setStatus('合成失敗',''); }
       btn.disabled=false; btn.innerHTML='💾 保存する';
+    };
+    window.addCopy = () => {
+      if (copies.length>=3) { alert('複製は最大3個まで追加できます。'); return; }
+      copies.push({scale:0.5}); renderCopiesList();
+    };
+    window.removeCopy = (idx) => { copies.splice(idx,1); renderCopiesList(); };
+    window.setCopyScale = (idx,val) => {
+      copies[idx].scale=val/100;
+      const el=document.getElementById('copyVal'+idx);
+      if(el) el.textContent=val+'%';
+    };
+    window.reDownloadComposite = () => {
+      if(compositeDataUrl) triggerDownload(compositeDataUrl,`withdoux_${Date.now()}.png`);
+    };
+
+    function renderPresetImages(genre) {
+      const scroll = document.getElementById('presetScroll');
+      const images = PRESET_GENRES[genre].images;
+      scroll.innerHTML = images.map((url, i) =>
+        `<div class="preset-img-btn${i===0?' selected':''}" style="background-image:url(${url})" onclick="selectPresetImage(this,'${url}')"></div>`
+      ).join('');
+      window.selectPresetImage(scroll.firstElementChild, images[0]);
+    }
+
+    function setStatus(text, mode='') {
+      const badge = document.getElementById('statusBadge');
+      document.getElementById('statusText').textContent = text;
+      badge.className = mode ? `statusBadge ${mode}` : 'statusBadge';
+      badge.style.display = 'inline-flex';
+    }
+
+    function updateEditorBg(url) {
+      const editor = document.getElementById('compositeEditor');
+      if (url) {
+        editor.style.backgroundImage=`url(${url})`; editor.style.backgroundSize='cover';
+        editor.style.backgroundPosition='center'; editor.style.backgroundColor='';
+      } else {
+        editor.style.backgroundImage=''; editor.style.backgroundColor='#f0ece6';
+      }
+    }
+
+    function initEditor(fgImageUrl) {
+      fgEditorX=0; fgEditorY=0; fgEditorScale=1.0;
+      document.getElementById('scaleRange').value=100;
+      document.getElementById('fgEditorImg').src=fgImageUrl;
+      updateEditorBg(customBgUrl||selectedBgImageUrl);
+      updateEditorTransform();
+    }
+
+    function updateEditorTransform() {
+      document.getElementById('fgEditorImg').style.transform =
+        `translate(calc(-50% + ${fgEditorX}px), calc(-50% + ${fgEditorY}px)) scale(${fgEditorScale})`;
     }
 
     function loadImage(src) {
@@ -587,16 +525,6 @@
       const a=document.createElement('a'); a.href=dataUrl; a.download=filename; a.click();
     }
 
-    function addCopy() {
-      if (copies.length>=3) { alert('複製は最大3個まで追加できます。'); return; }
-      copies.push({scale:0.5}); renderCopiesList();
-    }
-    function removeCopy(idx) { copies.splice(idx,1); renderCopiesList(); }
-    function setCopyScale(idx,val) {
-      copies[idx].scale=val/100;
-      const el=document.getElementById('copyVal'+idx);
-      if(el) el.textContent=val+'%';
-    }
     function renderCopiesList() {
       const list=document.getElementById('copiesList');
       if(!list) return;
@@ -614,11 +542,45 @@
     function showPreview(src) {
       document.getElementById('previewArea').innerHTML=`<img src="${src}" alt="プレビュー">`;
     }
-    function reDownloadComposite() {
-      if(compositeDataUrl) triggerDownload(compositeDataUrl,`withdoux_${Date.now()}.png`);
-    }
+
     function show(id) { document.getElementById(id).classList.remove('hidden'); }
     function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // ドラッグ＆ピンチ
+    const editor = document.getElementById('compositeEditor');
+    editor.addEventListener('mousedown', e => {
+      isDragging=true; dragStartX=e.clientX-fgEditorX; dragStartY=e.clientY-fgEditorY;
+      editor.style.cursor='grabbing';
+    });
+    document.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      fgEditorX=e.clientX-dragStartX; fgEditorY=e.clientY-dragStartY;
+      updateEditorTransform();
+    });
+    document.addEventListener('mouseup', () => { isDragging=false; editor.style.cursor='grab'; });
+    editor.addEventListener('touchstart', e => {
+      if (e.touches.length===1) {
+        isDragging=true; dragStartX=e.touches[0].clientX-fgEditorX; dragStartY=e.touches[0].clientY-fgEditorY;
+      } else if (e.touches.length===2) {
+        isDragging=false;
+        pinchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+        pinchStartScale=fgEditorScale;
+      }
+      e.preventDefault();
+    },{passive:false});
+    editor.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (e.touches.length===1&&isDragging) {
+        fgEditorX=e.touches[0].clientX-dragStartX; fgEditorY=e.touches[0].clientY-dragStartY;
+        updateEditorTransform();
+      } else if (e.touches.length===2) {
+        const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+        fgEditorScale=Math.min(3.0,Math.max(0.1,pinchStartScale*dist/pinchStartDist));
+        document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);
+        updateEditorTransform();
+      }
+    },{passive:false});
+    editor.addEventListener('touchend', ()=>{ isDragging=false; });
   </script>
 </body>
 </html>
