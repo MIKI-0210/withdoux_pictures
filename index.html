@@ -302,8 +302,6 @@
   </div>
 
   <script type="module">
-    const CDN = 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/';
-
     const BASE = 'https://raw.githubusercontent.com/MIKI-0210/withdoux_pictures/main/%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E7%94%BB%E5%83%8F/';
     const PRESET_GENRES = {
       simple:   { images: [BASE+'Image%20(1).png', BASE+'%E5%8F%82%E8%80%83%E2%91%A3.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A0.jpg', BASE+'Image%2038.png'] },
@@ -321,7 +319,6 @@
     let copies = [];
     const COPY_OFFSETS = [{dx:0.15,dy:0.10},{dx:-0.12,dy:0.18},{dx:0.06,dy:-0.16}];
 
-    // グローバルに公開（HTML onclick属性から呼ぶため）
     window.selectGenre = (btn, genre) => {
       document.querySelectorAll('.genre-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -380,10 +377,13 @@
       btn.disabled = true;
       btn.innerHTML = '<div class="spinner"></div> AI処理中…';
       try {
-        const { removeBackground } = await import(CDN + 'index.mjs');
+        const { removeBackground } = await import(
+          'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/dist/index.mjs'
+        );
         const res = await fetch(base64Image);
         const blob = await res.blob();
-        const resultBlob = await removeBackground(blob, { publicPath: CDN });
+        // publicPath省略 → デフォルトのimgly CDNからモデルを自動取得
+        const resultBlob = await removeBackground(blob);
         if (processedBlobUrl) URL.revokeObjectURL(processedBlobUrl);
         processedBlobUrl = URL.createObjectURL(resultBlob);
         showPreview(processedBlobUrl);
@@ -480,14 +480,12 @@
       ).join('');
       window.selectPresetImage(scroll.firstElementChild, images[0]);
     }
-
     function setStatus(text, mode='') {
       const badge = document.getElementById('statusBadge');
       document.getElementById('statusText').textContent = text;
       badge.className = mode ? `statusBadge ${mode}` : 'statusBadge';
       badge.style.display = 'inline-flex';
     }
-
     function updateEditorBg(url) {
       const editor = document.getElementById('compositeEditor');
       if (url) {
@@ -497,7 +495,6 @@
         editor.style.backgroundImage=''; editor.style.backgroundColor='#f0ece6';
       }
     }
-
     function initEditor(fgImageUrl) {
       fgEditorX=0; fgEditorY=0; fgEditorScale=1.0;
       document.getElementById('scaleRange').value=100;
@@ -505,12 +502,10 @@
       updateEditorBg(customBgUrl||selectedBgImageUrl);
       updateEditorTransform();
     }
-
     function updateEditorTransform() {
       document.getElementById('fgEditorImg').style.transform =
         `translate(calc(-50% + ${fgEditorX}px), calc(-50% + ${fgEditorY}px)) scale(${fgEditorScale})`;
     }
-
     function loadImage(src) {
       return new Promise((resolve,reject)=>{
         const img=new Image();
@@ -520,11 +515,9 @@
         img.src=src;
       });
     }
-
     function triggerDownload(dataUrl,filename) {
       const a=document.createElement('a'); a.href=dataUrl; a.download=filename; a.click();
     }
-
     function renderCopiesList() {
       const list=document.getElementById('copiesList');
       if(!list) return;
@@ -538,15 +531,12 @@
         </div>`;
       }).join('');
     }
-
     function showPreview(src) {
       document.getElementById('previewArea').innerHTML=`<img src="${src}" alt="プレビュー">`;
     }
-
     function show(id) { document.getElementById(id).classList.remove('hidden'); }
     function hide(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // ドラッグ＆ピンチ
     const editor = document.getElementById('compositeEditor');
     editor.addEventListener('mousedown', e => {
       isDragging=true; dragStartX=e.clientX-fgEditorX; dragStartY=e.clientY-fgEditorY;
