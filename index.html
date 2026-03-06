@@ -9,136 +9,103 @@
   <title>withdoux picture</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --rose: #e8546a;
-      --gold: #c9a84c;
-      --cream: #fdf6f0;
-      --dark: #1a1219;
-      --surface: #ffffff;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Noto Sans JP', sans-serif;
-      background: var(--cream);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center; padding: 16px;
-    }
-    h1 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--dark); letter-spacing: 0.02em; }
-    .card {
-      background: var(--surface); border-radius: 28px;
-      box-shadow: 0 8px 40px rgba(232,84,106,0.10), 0 2px 8px rgba(0,0,0,0.06);
-      width: 100%; max-width: 440px; padding: 36px 28px 28px; position: relative; overflow: hidden;
-    }
-    .card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-      background: linear-gradient(90deg, var(--rose), var(--gold));
-    }
-    .bg-checker {
-      background-color: #f5f0eb;
-      background-image: linear-gradient(45deg,#e5ddd5 25%,transparent 25%,transparent 75%,#e5ddd5 75%),
-                        linear-gradient(45deg,#e5ddd5 25%,transparent 25%,transparent 75%,#e5ddd5 75%);
-      background-size: 24px 24px; background-position: 0 0, 12px 12px;
-    }
-    #previewArea {
-      width: 100%; aspect-ratio: 1/1; border-radius: 18px; border: 2px dashed #e0d5ce;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden; margin-bottom: 20px; transition: border-color 0.3s; position: relative;
-    }
-    #previewArea img { max-width: 100%; max-height: 100%; object-fit: contain; }
-    #previewArea .placeholder-text {
-      color: #b0a09a; font-size: 0.85rem; pointer-events: none;
-      display: flex; flex-direction: column; align-items: center; gap: 8px;
-    }
-    .preview-wrapper { position: relative; margin-bottom: 20px; }
-    #resetBtn {
-      position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%;
-      background: rgba(26,18,25,0.65); color: #fff; border: none; cursor: pointer;
-      font-size: 1rem; display: flex; align-items: center; justify-content: center;
-      z-index: 10; transition: background 0.2s; backdrop-filter: blur(4px);
-    }
-    #resetBtn:hover { background: rgba(232,84,106,0.85); }
-    .ratio-group { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 20px; }
-    .ratio-btn {
-      padding: 10px 6px; border-radius: 12px; font-size: 0.82rem; font-weight: 700;
-      border: 2px solid #e8ddd8; cursor: pointer; transition: all 0.2s; background: #fff; color: #7a6a65;
-    }
-    .ratio-btn.active { background: var(--dark); color: #fff; border-color: var(--dark); }
-    .ratio-btn:hover:not(.active) { border-color: var(--rose); color: var(--rose); }
-    .btn {
-      width: 100%; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 0.95rem;
-      cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .btn-ghost { background: #f7f1ee; color: #5a4a46; }
-    .btn-ghost:hover { background: #ede4df; }
-    .btn-primary { background: linear-gradient(135deg,var(--rose),#d63a57); color: #fff; box-shadow: 0 4px 20px rgba(232,84,106,0.35); }
-    .btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn-download { background: linear-gradient(135deg,var(--gold),#b8923a); color: #fff; box-shadow: 0 4px 20px rgba(201,168,76,0.35); }
-    .btn-download:hover { filter: brightness(1.06); transform: translateY(-1px); }
-    .btn-download:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    .btn-stack { display: flex; flex-direction: column; gap: 10px; }
-    .section-divider {
-      display: flex; align-items: center; gap: 10px; margin: 22px 0 16px;
-      color: #b0a09a; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-    }
-    .section-divider::before, .section-divider::after { content: ''; flex: 1; height: 1px; background: #ede4df; }
-    .genre-tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
-    .genre-tabs::-webkit-scrollbar { display: none; }
-    .genre-tab {
-      flex-shrink: 0; padding: 8px 16px; border-radius: 20px; border: 2px solid #e8ddd8; background: #fff;
-      font-size: 0.78rem; font-weight: 700; cursor: pointer; color: #7a6a65; transition: all 0.2s; white-space: nowrap;
-    }
-    .genre-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
-    .genre-tab:hover:not(.active) { border-color: var(--rose); color: var(--rose); }
-    .preset-scroll {
-      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px;
-      scrollbar-width: thin; scrollbar-color: #e0d5ce transparent;
-    }
-    .preset-scroll::-webkit-scrollbar { height: 4px; }
-    .preset-scroll::-webkit-scrollbar-track { background: transparent; }
-    .preset-scroll::-webkit-scrollbar-thumb { background: #e0d5ce; border-radius: 2px; }
-    .preset-img-btn {
-      flex-shrink: 0; width: 76px; height: 76px; border-radius: 12px; border: 3px solid transparent;
-      background-size: cover; background-position: center; cursor: pointer; transition: all 0.2s; background-color: #f0ece6;
-    }
-    .preset-img-btn:hover { transform: scale(1.06); }
-    .preset-img-btn.selected { border-color: var(--rose); box-shadow: 0 0 0 2px rgba(232,84,106,0.3); }
-    #statusBadge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.78rem; font-weight: 700; color: #8a7a76; margin-bottom: 18px;
-    }
-    #statusBadge .dot { width: 7px; height: 7px; border-radius: 50%; background: #c5b8b0; }
-    #statusBadge.processing .dot { background: var(--rose); animation: pulse 1s infinite; }
-    #statusBadge.done .dot { background: #4caf50; }
+    :root { --rose:#e8546a; --gold:#c9a84c; --cream:#fdf6f0; --dark:#1a1219; --surface:#ffffff; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Noto Sans JP',sans-serif; background:var(--cream); min-height:100vh; display:flex; flex-direction:column; align-items:center; padding:16px; }
+    h1 { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--dark); letter-spacing:0.02em; }
+    .card { background:var(--surface); border-radius:28px; box-shadow:0 8px 40px rgba(232,84,106,0.10),0 2px 8px rgba(0,0,0,0.06); width:100%; max-width:440px; padding:36px 28px 28px; position:relative; overflow:hidden; }
+    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--rose),var(--gold)); }
+    .bg-checker { background-color:#f5f0eb; background-image:linear-gradient(45deg,#e5ddd5 25%,transparent 25%,transparent 75%,#e5ddd5 75%),linear-gradient(45deg,#e5ddd5 25%,transparent 25%,transparent 75%,#e5ddd5 75%); background-size:24px 24px; background-position:0 0,12px 12px; }
+    #previewArea { width:100%; aspect-ratio:1/1; border-radius:18px; border:2px dashed #e0d5ce; display:flex; align-items:center; justify-content:center; overflow:hidden; margin-bottom:20px; transition:border-color 0.3s; position:relative; }
+    #previewArea img { max-width:100%; max-height:100%; object-fit:contain; }
+    #previewArea .placeholder-text { color:#b0a09a; font-size:0.85rem; pointer-events:none; display:flex; flex-direction:column; align-items:center; gap:8px; }
+    .preview-wrapper { position:relative; margin-bottom:20px; }
+    #resetBtn { position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:50%; background:rgba(26,18,25,0.65); color:#fff; border:none; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; z-index:10; transition:background 0.2s; backdrop-filter:blur(4px); }
+    #resetBtn:hover { background:rgba(232,84,106,0.85); }
+    .ratio-group { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+    .ratio-btn { padding:10px 6px; border-radius:12px; font-size:0.82rem; font-weight:700; border:2px solid #e8ddd8; cursor:pointer; transition:all 0.2s; background:#fff; color:#7a6a65; }
+    .ratio-btn.active { background:var(--dark); color:#fff; border-color:var(--dark); }
+    .ratio-btn:hover:not(.active) { border-color:var(--rose); color:var(--rose); }
+    .btn { width:100%; padding:16px; border-radius:14px; font-weight:700; font-size:0.95rem; cursor:pointer; transition:all 0.2s; border:none; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-ghost { background:#f7f1ee; color:#5a4a46; }
+    .btn-ghost:hover { background:#ede4df; }
+    .btn-primary { background:linear-gradient(135deg,var(--rose),#d63a57); color:#fff; box-shadow:0 4px 20px rgba(232,84,106,0.35); }
+    .btn-primary:hover { filter:brightness(1.06); transform:translateY(-1px); }
+    .btn-primary:active { transform:translateY(0); }
+    .btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+    .btn-download { background:linear-gradient(135deg,var(--gold),#b8923a); color:#fff; box-shadow:0 4px 20px rgba(201,168,76,0.35); }
+    .btn-download:hover { filter:brightness(1.06); transform:translateY(-1px); }
+    .btn-download:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+    .btn-eraser { background:#f0e8f5; color:#6a3a7a; border:2px solid #d4b8e0; font-weight:700; }
+    .btn-eraser:hover { background:#e4d0f0; }
+    .btn-stack { display:flex; flex-direction:column; gap:10px; }
+    .section-divider { display:flex; align-items:center; gap:10px; margin:22px 0 16px; color:#b0a09a; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; }
+    .section-divider::before,.section-divider::after { content:''; flex:1; height:1px; background:#ede4df; }
+    .genre-tabs { display:flex; gap:6px; margin-bottom:12px; overflow-x:auto; padding-bottom:2px; scrollbar-width:none; }
+    .genre-tabs::-webkit-scrollbar { display:none; }
+    .genre-tab { flex-shrink:0; padding:8px 16px; border-radius:20px; border:2px solid #e8ddd8; background:#fff; font-size:0.78rem; font-weight:700; cursor:pointer; color:#7a6a65; transition:all 0.2s; white-space:nowrap; }
+    .genre-tab.active { background:var(--dark); color:#fff; border-color:var(--dark); }
+    .genre-tab:hover:not(.active) { border-color:var(--rose); color:var(--rose); }
+    .preset-scroll { display:flex; gap:8px; overflow-x:auto; padding-bottom:8px; margin-bottom:10px; scrollbar-width:thin; scrollbar-color:#e0d5ce transparent; }
+    .preset-scroll::-webkit-scrollbar { height:4px; }
+    .preset-scroll::-webkit-scrollbar-track { background:transparent; }
+    .preset-scroll::-webkit-scrollbar-thumb { background:#e0d5ce; border-radius:2px; }
+    .preset-img-btn { flex-shrink:0; width:76px; height:76px; border-radius:12px; border:3px solid transparent; background-size:cover; background-position:center; cursor:pointer; transition:all 0.2s; background-color:#f0ece6; }
+    .preset-img-btn:hover { transform:scale(1.06); }
+    .preset-img-btn.selected { border-color:var(--rose); box-shadow:0 0 0 2px rgba(232,84,106,0.3); }
+    #statusBadge { display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; font-weight:700; color:#8a7a76; margin-bottom:18px; }
+    #statusBadge .dot { width:7px; height:7px; border-radius:50%; background:#c5b8b0; }
+    #statusBadge.processing .dot { background:var(--rose); animation:pulse 1s infinite; }
+    #statusBadge.done .dot { background:#4caf50; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-    .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .hidden { display: none !important; }
-    .copy-item {
-      display: flex; align-items: center; gap: 8px; background: #fdf7f5;
-      border: 1.5px solid #e0d5ce; border-radius: 12px; padding: 8px 12px; margin-bottom: 8px;
+    .spinner { width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .hidden { display:none !important; }
+    .copy-item { display:flex; align-items:center; gap:8px; background:#fdf7f5; border:1.5px solid #e0d5ce; border-radius:12px; padding:8px 12px; margin-bottom:8px; }
+    .copy-item label { font-size:0.72rem; color:#8a7a76; white-space:nowrap; }
+    .copy-item input[type="range"] { flex:1; accent-color:var(--rose); }
+    .copy-item .copy-size-val { font-size:0.7rem; color:#b0a09a; min-width:32px; text-align:right; }
+    .copy-item .remove-btn { width:24px; height:24px; border-radius:50%; border:1.5px solid #e0d5ce; background:#fff; color:#b0a09a; cursor:pointer; font-size:0.85rem; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .add-copy-btn { width:100%; padding:10px; background:none; border:1.5px dashed #e0d5ce; border-radius:12px; color:#b0a09a; font-size:0.82rem; font-weight:700; cursor:pointer; margin-bottom:10px; transition:all 0.2s; }
+    .add-copy-btn:hover { border-color:var(--rose); color:var(--rose); }
+
+    /* ── 消しゴムモーダル ── */
+    #eraserModal {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.93); z-index:2000;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px;
     }
-    .copy-item label { font-size: 0.72rem; color: #8a7a76; white-space: nowrap; }
-    .copy-item input[type="range"] { flex: 1; accent-color: var(--rose); }
-    .copy-item .copy-size-val { font-size: 0.7rem; color: #b0a09a; min-width: 32px; text-align: right; }
-    .copy-item .remove-btn {
-      width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #e0d5ce; background: #fff;
-      color: #b0a09a; cursor: pointer; font-size: 0.85rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    #eraserModal p { color:#ccc; font-size:0.82rem; margin-bottom:10px; text-align:center; }
+    #eraserCanvasWrap {
+      position:relative; max-width:min(100%,440px); max-height:60vh;
+      background-image:linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%),
+                       linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%);
+      background-size:12px 12px; background-position:0 0,6px 6px;
+      border-radius:12px; overflow:hidden;
     }
-    .add-copy-btn {
-      width: 100%; padding: 10px; background: none; border: 1.5px dashed #e0d5ce; border-radius: 12px;
-      color: #b0a09a; font-size: 0.82rem; font-weight: 700; cursor: pointer; margin-bottom: 10px; transition: all 0.2s;
+    #eraserCanvas { display:block; max-width:100%; max-height:60vh; cursor:crosshair; touch-action:none; }
+    #eraserCursor {
+      position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,0.8);
+      pointer-events:none; transform:translate(-50%,-50%);
+      background:rgba(232,84,106,0.25);
     }
-    .add-copy-btn:hover { border-color: var(--rose); color: var(--rose); }
+    .eraser-controls { margin-top:14px; width:100%; max-width:440px; display:flex; flex-direction:column; gap:10px; }
+    .eraser-controls .row { display:flex; align-items:center; gap:10px; }
+    .eraser-controls label { color:#ccc; font-size:0.78rem; white-space:nowrap; }
+    .eraser-controls input[type="range"] { flex:1; accent-color:var(--rose); }
+    .eraser-controls .btns { display:flex; gap:10px; }
+    .eraser-done { flex:1; padding:14px; background:linear-gradient(135deg,var(--rose),#d63a57); color:#fff; border:none; border-radius:14px; font-weight:700; font-size:0.95rem; cursor:pointer; }
+    .eraser-cancel { flex:1; padding:14px; background:#333; color:#ccc; border:none; border-radius:14px; font-weight:700; font-size:0.95rem; cursor:pointer; }
+    .eraser-undo { padding:14px 18px; background:#444; color:#ccc; border:none; border-radius:14px; font-weight:700; font-size:0.95rem; cursor:pointer; }
   </style>
 </head>
 <body>
 
+  <!-- ① 背景削除カード -->
   <div class="card" style="margin-bottom:16px;">
-    <div style="text-align:center; margin-bottom:20px;">
+    <div style="text-align:center;margin-bottom:20px;">
       <h1>withdoux picture</h1>
-      <p style="color:#b0a09a; font-size:0.8rem; margin-top:4px;">パティシエのための写真加工ツール</p>
+      <p style="color:#b0a09a;font-size:0.8rem;margin-top:4px;">パティシエのための写真加工ツール</p>
     </div>
     <div id="statusBadge"><span class="dot"></span><span id="statusText">お菓子の写真を選択してください</span></div>
     <div class="section-divider">① 背景削除</div>
@@ -158,11 +125,13 @@
     <div class="btn-stack">
       <button class="btn btn-ghost" onclick="document.getElementById('fileInput').click()">📷 写真を選択</button>
       <button id="magicBtn" class="btn btn-primary hidden" onclick="runMagic()">✨ 魔法をかける（背景削除）</button>
+      <button id="fgEraserBtn" class="btn btn-eraser hidden" onclick="openEraser('fg')">🧹 消しゴムで修正する</button>
       <button id="downloadBtn" class="btn btn-download hidden" onclick="downloadImage()">💾 背景削除した画像を保存</button>
     </div>
-    <p style="text-align:center; color:#c5b8b0; font-size:0.7rem; margin-top:20px;">Powered by AI Background Removal（無制限・無料）</p>
+    <p style="text-align:center;color:#c5b8b0;font-size:0.7rem;margin-top:20px;">Powered by AI Background Removal（無制限・無料）</p>
   </div>
 
+  <!-- ② 背景合成カード -->
   <div id="compositeSection" class="card hidden">
     <div class="section-divider">② 背景合成</div>
     <div class="genre-tabs">
@@ -173,6 +142,8 @@
       <button class="genre-tab" onclick="selectGenre(this,'classic')">クラシカル</button>
     </div>
     <div class="preset-scroll" id="presetScroll"></div>
+    <!-- 背景消しゴムボタン -->
+    <button id="bgEraserBtn" class="btn btn-eraser" style="margin-bottom:10px;" onclick="openEraser('bg')">🧹 背景のケーキを消す</button>
     <button class="btn btn-ghost" style="margin-bottom:4px;" onclick="document.getElementById('bgFileInput').click()">🖼 背景画像をアップロード</button>
     <div class="section-divider">位置・サイズを調整</div>
     <div id="compositeEditor" style="position:relative;width:100%;aspect-ratio:1/1;overflow:hidden;border-radius:14px;border:2px solid #e0d5ce;touch-action:none;user-select:none;cursor:grab;background:#f0ece6;background-size:cover;background-position:center;">
@@ -196,33 +167,185 @@
     </div>
   </div>
 
+  <!-- 消しゴムモーダル -->
+  <div id="eraserModal" class="hidden">
+    <p>指でなぞると消えます　透明部分 = チェック柄</p>
+    <div id="eraserCanvasWrap">
+      <canvas id="eraserCanvas"></canvas>
+      <div id="eraserCursor" style="display:none;"></div>
+    </div>
+    <div class="eraser-controls">
+      <div class="row">
+        <label>ブラシサイズ</label>
+        <input type="range" id="brushSizeRange" min="5" max="120" value="20" oninput="updateBrushSize(this.value)">
+        <span id="brushSizeVal" style="color:#ccc;font-size:0.78rem;min-width:28px;">20</span>
+      </div>
+      <div class="btns">
+        <button class="eraser-undo" onclick="undoEraser()">↩ 戻す</button>
+        <button class="eraser-done" onclick="closeEraser(true)">✅ 完了</button>
+        <button class="eraser-cancel" onclick="closeEraser(false)">❌ キャンセル</button>
+      </div>
+    </div>
+  </div>
+
   <script type="importmap">
-  {
-    "imports": {
-      "lodash": "https://esm.sh/lodash@4.17.21",
-      "lodash/": "https://esm.sh/lodash@4.17.21/"
-    }
-  }
+  { "imports": { "lodash": "https://esm.sh/lodash@4.17.21", "lodash/": "https://esm.sh/lodash@4.17.21/" } }
   </script>
 
   <script type="module">
-    const BASE = 'https://raw.githubusercontent.com/MIKI-0210/withdoux_pictures/main/%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E7%94%BB%E5%83%8F/';
-    const PRESET_GENRES = {
-      simple:   { images: [BASE+'Image%20(1).png', BASE+'%E5%8F%82%E8%80%83%E2%91%A3.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A0.jpg', BASE+'Image%2038.png'] },
-      table:    { images: [BASE+'Image%206.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A0.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A2.png', BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A4.png'] },
-      magazine: { images: [BASE+'%E5%8F%82%E8%80%83%E2%91%A4.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A2.jpg', BASE+'Image.png'] },
-      pop:      { images: [BASE+'Image%2016.png', BASE+'Image%2034.png'] },
-      classic:  { images: [BASE+'Image%2077.png', BASE+'Image%2080.jpg', BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg'] },
+    const BASE='https://raw.githubusercontent.com/MIKI-0210/withdoux_pictures/main/%E3%83%97%E3%83%AA%E3%82%BB%E3%83%83%E3%83%88%E7%94%BB%E5%83%8F/';
+    const PRESET_GENRES={
+      simple:{images:[BASE+'Image%20(1).png',BASE+'%E5%8F%82%E8%80%83%E2%91%A3.jpg',BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg',BASE+'%E5%8F%82%E8%80%83%E2%91%A0.jpg',BASE+'Image%2038.png']},
+      table:{images:[BASE+'Image%206.png',BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A0.png',BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A2.png',BASE+'%E3%82%AF%E3%83%A9%E3%82%B7%E3%82%AB%E3%83%AB%E8%83%8C%E6%99%AF%E2%91%A4.png']},
+      magazine:{images:[BASE+'%E5%8F%82%E8%80%83%E2%91%A4.jpg',BASE+'%E5%8F%82%E8%80%83%E2%91%A2.jpg',BASE+'Image.png']},
+      pop:{images:[BASE+'Image%2016.png',BASE+'Image%2034.png']},
+      classic:{images:[BASE+'Image%2077.png',BASE+'Image%2080.jpg',BASE+'%E5%8F%82%E8%80%83%E2%91%A1.jpg']},
     };
 
-    let base64Image='', selectedRatio='1:1', processedBlobUrl='', compositeDataUrl='';
-    let selectedBgImageUrl='', customBgUrl='';
-    let fgEditorX=0, fgEditorY=0, fgEditorScale=1.0;
-    let isDragging=false, dragStartX=0, dragStartY=0;
-    let pinchStartDist=0, pinchStartScale=1.0;
+    let base64Image='',selectedRatio='1:1',processedBlobUrl='',compositeDataUrl='';
+    let selectedBgImageUrl='',customBgUrl='';
+    let fgEditorX=0,fgEditorY=0,fgEditorScale=1.0;
+    let isDragging=false,dragStartX=0,dragStartY=0;
+    let pinchStartDist=0,pinchStartScale=1.0;
     let copies=[];
     const COPY_OFFSETS=[{dx:0.15,dy:0.10},{dx:-0.12,dy:0.18},{dx:0.06,dy:-0.16}];
 
+    // ── 消しゴム状態 ──
+    let eraserTarget=null;
+    let brushSize=20;
+    let isErasing=false;
+    let eraserHistory=[];
+
+    // ── 消しゴム：開く ──
+    window.openEraser=async(target)=>{
+      const bgUrl=customBgUrl||selectedBgImageUrl;
+      if(target==='fg'&&!processedBlobUrl){alert('先に背景削除を実行してください。');return;}
+      if(target==='bg'&&!bgUrl){alert('先に背景を選択してください。');return;}
+      eraserTarget=target;
+      eraserHistory=[];
+
+      const canvas=document.getElementById('eraserCanvas');
+      const ctx=canvas.getContext('2d');
+      const imgUrl=target==='fg'?processedBlobUrl:bgUrl;
+
+      const img=new Image();
+      if(!imgUrl.startsWith('blob:')&&!imgUrl.startsWith('data:'))img.crossOrigin='anonymous';
+      img.onload=()=>{
+        canvas.width=img.naturalWidth;
+        canvas.height=img.naturalHeight;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img,0,0);
+        eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+        document.getElementById('eraserModal').classList.remove('hidden');
+      };
+      img.src=imgUrl;
+    };
+
+    // ── 消しゴム：閉じる ──
+    window.closeEraser=(save)=>{
+      if(save){
+        const canvas=document.getElementById('eraserCanvas');
+        canvas.toBlob(blob=>{
+          const url=URL.createObjectURL(blob);
+          if(eraserTarget==='fg'){
+            if(processedBlobUrl)URL.revokeObjectURL(processedBlobUrl);
+            processedBlobUrl=url;
+            showPreview(processedBlobUrl);
+            document.getElementById('fgEditorImg').src=processedBlobUrl;
+          } else {
+            customBgUrl=url; selectedBgImageUrl='';
+            document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));
+            updateEditorBg(customBgUrl);
+            setStatus('背景の編集完了 ✅','done');
+          }
+        },'image/png');
+      }
+      document.getElementById('eraserModal').classList.add('hidden');
+    };
+
+    window.updateBrushSize=(val)=>{
+      brushSize=+val;
+      document.getElementById('brushSizeVal').textContent=val;
+      document.getElementById('eraserCursor').style.width=brushSize*2+'px';
+      document.getElementById('eraserCursor').style.height=brushSize*2+'px';
+    };
+
+    window.undoEraser=()=>{
+      if(eraserHistory.length<=1)return;
+      eraserHistory.pop();
+      const canvas=document.getElementById('eraserCanvas');
+      const ctx=canvas.getContext('2d');
+      ctx.putImageData(eraserHistory[eraserHistory.length-1],0,0);
+    };
+
+    function eraseAt(canvas,x,y){
+      const ctx=canvas.getContext('2d');
+      ctx.globalCompositeOperation='destination-out';
+      ctx.beginPath();
+      ctx.arc(x,y,brushSize,0,Math.PI*2);
+      ctx.fill();
+      ctx.globalCompositeOperation='source-over';
+    }
+
+    function getCanvasPos(canvas,clientX,clientY){
+      const rect=canvas.getBoundingClientRect();
+      return{x:(clientX-rect.left)*(canvas.width/rect.width),y:(clientY-rect.top)*(canvas.height/rect.height)};
+    }
+
+    // マウス操作
+    (()=>{
+      const canvas=document.getElementById('eraserCanvas');
+      const cursor=document.getElementById('eraserCursor');
+
+      canvas.addEventListener('mousedown',e=>{
+        isErasing=true;
+        const p=getCanvasPos(canvas,e.clientX,e.clientY);
+        eraseAt(canvas,p.x,p.y);
+      });
+      canvas.addEventListener('mousemove',e=>{
+        const rect=canvas.getBoundingClientRect();
+        cursor.style.display='block';
+        cursor.style.left=(e.clientX-rect.left)+'px';
+        cursor.style.top=(e.clientY-rect.top)+'px';
+        cursor.style.width=brushSize*2*(rect.width/canvas.width)+'px';
+        cursor.style.height=brushSize*2*(rect.height/canvas.height)+'px';
+        if(!isErasing)return;
+        const p=getCanvasPos(canvas,e.clientX,e.clientY);
+        eraseAt(canvas,p.x,p.y);
+      });
+      canvas.addEventListener('mouseleave',()=>{cursor.style.display='none';});
+      document.addEventListener('mouseup',()=>{
+        if(isErasing){
+          isErasing=false;
+          const ctx=canvas.getContext('2d');
+          eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+          if(eraserHistory.length>30)eraserHistory.shift();
+        }
+      });
+      // タッチ操作
+      canvas.addEventListener('touchstart',e=>{
+        e.preventDefault();
+        isErasing=true;
+        const t=e.touches[0];
+        const p=getCanvasPos(canvas,t.clientX,t.clientY);
+        eraseAt(canvas,p.x,p.y);
+      },{passive:false});
+      canvas.addEventListener('touchmove',e=>{
+        e.preventDefault();
+        if(!isErasing)return;
+        const t=e.touches[0];
+        const p=getCanvasPos(canvas,t.clientX,t.clientY);
+        eraseAt(canvas,p.x,p.y);
+      },{passive:false});
+      canvas.addEventListener('touchend',()=>{
+        isErasing=false;
+        const ctx=canvas.getContext('2d');
+        eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+        if(eraserHistory.length>30)eraserHistory.shift();
+      });
+    })();
+
+    // ── メイン機能 ──
     window.selectGenre=(btn,genre)=>{
       document.querySelectorAll('.genre-tab').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active'); customBgUrl=''; renderPresetImages(genre);
@@ -231,25 +354,23 @@
       document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));
       if(el)el.classList.add('selected'); selectedBgImageUrl=url; customBgUrl=''; updateEditorBg(url);
     };
-    window.setRatio=(r,btn)=>{
-      selectedRatio=r; document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-    };
+    window.setRatio=(r,btn)=>{ selectedRatio=r; document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
     window.resetAll=()=>{
-      base64Image=''; processedBlobUrl=''; compositeDataUrl=''; customBgUrl=''; selectedBgImageUrl='';
+      base64Image='';processedBlobUrl='';compositeDataUrl='';customBgUrl='';selectedBgImageUrl='';
       document.getElementById('previewArea').innerHTML='<div class="placeholder-text"><span style="font-size:2rem">🎂</span><span>ここに画像が表示されます</span></div>';
       document.getElementById('fileInput').value='';
-      hide('resetBtn');hide('magicBtn');hide('downloadBtn');hide('compositeSection');hide('addCopyBtn');
+      hide('resetBtn');hide('magicBtn');hide('fgEraserBtn');hide('downloadBtn');hide('compositeSection');hide('addCopyBtn');
       copies=[];renderCopiesList();setStatus('お菓子の写真を選択してください','');
     };
     window.handleFile=(input)=>{
       if(!input.files||!input.files[0])return;
       const reader=new FileReader();
       reader.onload=(e)=>{
-        base64Image=e.target.result; showPreview(base64Image);
+        base64Image=e.target.result;showPreview(base64Image);
         show('resetBtn');show('magicBtn');
         document.getElementById('magicBtn').innerHTML='✨ 魔法をかける（背景削除）';
         document.getElementById('magicBtn').disabled=false;
-        hide('downloadBtn');hide('compositeSection');hide('addCopyBtn');
+        hide('fgEraserBtn');hide('downloadBtn');hide('compositeSection');hide('addCopyBtn');
         copies=[];renderCopiesList();processedBlobUrl='';
         setStatus('準備完了！「魔法をかける」を押してください','');
       };
@@ -258,58 +379,47 @@
     window.handleBgFile=(input)=>{
       if(!input.files||!input.files[0])return;
       const reader=new FileReader();
-      reader.onload=(e)=>{
-        customBgUrl=e.target.result; selectedBgImageUrl='';
-        document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));
-        updateEditorBg(customBgUrl); setStatus('背景画像の準備完了 ✅','done');
-      };
+      reader.onload=(e)=>{ customBgUrl=e.target.result;selectedBgImageUrl=''; document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected')); updateEditorBg(customBgUrl);setStatus('背景画像の準備完了 ✅','done'); };
       reader.readAsDataURL(input.files[0]);
     };
     window.runMagic=async()=>{
       const btn=document.getElementById('magicBtn');
       setStatus('背景を削除中…（初回はAIモデルのDLで数十秒かかります）','processing');
-      btn.disabled=true; btn.innerHTML='<div class="spinner"></div> AI処理中…';
-      try {
-        const {removeBackground} = await import('https://esm.sh/@imgly/background-removal@1.4.5');
+      btn.disabled=true;btn.innerHTML='<div class="spinner"></div> AI処理中…';
+      try{
+        const{removeBackground}=await import('https://esm.sh/@imgly/background-removal@1.4.5');
         const res=await fetch(base64Image);
         const blob=await res.blob();
         const resultBlob=await removeBackground(blob);
         if(processedBlobUrl)URL.revokeObjectURL(processedBlobUrl);
         processedBlobUrl=URL.createObjectURL(resultBlob);
         showPreview(processedBlobUrl);
-        setStatus('完成！🎉 保存または下の背景合成へ','done');
-        show('downloadBtn');show('compositeSection');show('addCopyBtn');hide('magicBtn');
+        setStatus('完成！🎉 必要なら消しゴムで修正できます','done');
+        show('fgEraserBtn');show('downloadBtn');show('compositeSection');show('addCopyBtn');hide('magicBtn');
         renderPresetImages('simple');
         initEditor(processedBlobUrl);
         document.getElementById('compositeSection').scrollIntoView({behavior:'smooth',block:'start'});
-      } catch(e){
-        alert('❌ エラー: '+e.message); setStatus('エラーが発生しました','');
-      }
-      btn.disabled=false; btn.innerHTML='✨ 魔法をかける（背景削除）';
+      }catch(e){alert('❌ エラー: '+e.message);setStatus('エラーが発生しました','');}
+      btn.disabled=false;btn.innerHTML='✨ 魔法をかける（背景削除）';
     };
     window.downloadImage=()=>{
       if(!processedBlobUrl)return;
-      const a=document.createElement('a'); a.href=processedBlobUrl; a.download=`withdoux_${Date.now()}.png`; a.click();
+      const a=document.createElement('a');a.href=processedBlobUrl;a.download=`withdoux_${Date.now()}.png`;a.click();
       setStatus('ダウンロード完了 ✅','done');
     };
-    window.adjustScale=(delta)=>{
-      fgEditorScale=Math.min(3.0,Math.max(0.1,fgEditorScale+delta));
-      document.getElementById('scaleRange').value=Math.round(fgEditorScale*100); updateEditorTransform();
-    };
-    window.setScaleFromSlider=(val)=>{ fgEditorScale=val/100; updateEditorTransform(); };
-    window.resetEditorTransform=()=>{ fgEditorX=0;fgEditorY=0;fgEditorScale=1.0; document.getElementById('scaleRange').value=100; updateEditorTransform(); };
+    window.adjustScale=(delta)=>{ fgEditorScale=Math.min(3.0,Math.max(0.1,fgEditorScale+delta)); document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);updateEditorTransform(); };
+    window.setScaleFromSlider=(val)=>{ fgEditorScale=val/100;updateEditorTransform(); };
+    window.resetEditorTransform=()=>{ fgEditorX=0;fgEditorY=0;fgEditorScale=1.0;document.getElementById('scaleRange').value=100;updateEditorTransform(); };
     window.runComposite=async()=>{
       if(!processedBlobUrl){alert('先に背景削除を実行してください。');return;}
       const bgUrl=customBgUrl||selectedBgImageUrl;
       if(!bgUrl){alert('背景を選択してください。');return;}
       const btn=document.getElementById('compositeBtn');
-      btn.disabled=true; btn.innerHTML='<div class="spinner"></div> 合成・保存中…'; setStatus('合成中…','processing');
+      btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 合成・保存中…';setStatus('合成中…','processing');
       let imgW,imgH;
-      if(selectedRatio==='1:1'){imgW=1000;imgH=1000;}
-      else if(selectedRatio==='4:5'){imgW=800;imgH=1000;}
-      else{imgW=1600;imgH=900;}
+      if(selectedRatio==='1:1'){imgW=1000;imgH=1000;}else if(selectedRatio==='4:5'){imgW=800;imgH=1000;}else{imgW=1600;imgH=900;}
       try{
-        const canvas=document.createElement('canvas'); canvas.width=imgW; canvas.height=imgH;
+        const canvas=document.createElement('canvas');canvas.width=imgW;canvas.height=imgH;
         const ctx=canvas.getContext('2d');
         const bgImg=await loadImage(bgUrl);
         const bgScale=Math.max(imgW/bgImg.naturalWidth,imgH/bgImg.naturalHeight);
@@ -328,17 +438,17 @@
           const cW=Math.min(Math.round(baseW*copy.scale),imgW),cH=Math.round(cW*aspect);
           ctx.drawImage(fgImg,(imgW-cW)/2+offsetX+Math.round(off.dx*imgW),(imgH-cH)/2+offsetY+Math.round(off.dy*imgH),cW,cH);
         });
-        const dataUrl=canvas.toDataURL('image/png'); compositeDataUrl=dataUrl;
-        document.getElementById('compositeResultImg').src=dataUrl; show('compositeResultArea');
+        const dataUrl=canvas.toDataURL('image/png');compositeDataUrl=dataUrl;
+        document.getElementById('compositeResultImg').src=dataUrl;show('compositeResultArea');
         triggerDownload(dataUrl,`withdoux_${Date.now()}.png`);
         setStatus('保存しました！🎉','done');
         document.getElementById('compositeResultArea').scrollIntoView({behavior:'smooth',block:'start'});
       }catch(e){alert('❌ 合成エラー: '+e.message);setStatus('合成失敗','');}
-      btn.disabled=false; btn.innerHTML='💾 保存する';
+      btn.disabled=false;btn.innerHTML='💾 保存する';
     };
     window.addCopy=()=>{ if(copies.length>=3){alert('複製は最大3個まで追加できます。');return;} copies.push({scale:0.5});renderCopiesList(); };
     window.removeCopy=(idx)=>{ copies.splice(idx,1);renderCopiesList(); };
-    window.setCopyScale=(idx,val)=>{ copies[idx].scale=val/100; const el=document.getElementById('copyVal'+idx); if(el)el.textContent=val+'%'; };
+    window.setCopyScale=(idx,val)=>{ copies[idx].scale=val/100;const el=document.getElementById('copyVal'+idx);if(el)el.textContent=val+'%'; };
     window.reDownloadComposite=()=>{ if(compositeDataUrl)triggerDownload(compositeDataUrl,`withdoux_${Date.now()}.png`); };
 
     function renderPresetImages(genre){
@@ -350,7 +460,7 @@
     function setStatus(text,mode=''){
       const badge=document.getElementById('statusBadge');
       document.getElementById('statusText').textContent=text;
-      badge.className=mode?`statusBadge ${mode}`:'statusBadge'; badge.style.display='inline-flex';
+      badge.className=mode?`statusBadge ${mode}`:'statusBadge';badge.style.display='inline-flex';
     }
     function updateEditorBg(url){
       const editor=document.getElementById('compositeEditor');
@@ -361,7 +471,7 @@
       fgEditorX=0;fgEditorY=0;fgEditorScale=1.0;
       document.getElementById('scaleRange').value=100;
       document.getElementById('fgEditorImg').src=fgImageUrl;
-      updateEditorBg(customBgUrl||selectedBgImageUrl); updateEditorTransform();
+      updateEditorBg(customBgUrl||selectedBgImageUrl);updateEditorTransform();
     }
     function updateEditorTransform(){
       document.getElementById('fgEditorImg').style.transform=`translate(calc(-50% + ${fgEditorX}px), calc(-50% + ${fgEditorY}px)) scale(${fgEditorScale})`;
@@ -370,36 +480,37 @@
       return new Promise((resolve,reject)=>{
         const img=new Image();
         if(!src.startsWith('blob:')&&!src.startsWith('data:'))img.crossOrigin='anonymous';
-        img.onload=()=>resolve(img); img.onerror=()=>reject(new Error('画像の読み込みに失敗しました')); img.src=src;
+        img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('画像の読み込みに失敗しました'));img.src=src;
       });
     }
-    function triggerDownload(dataUrl,filename){ const a=document.createElement('a');a.href=dataUrl;a.download=filename;a.click(); }
+    function triggerDownload(dataUrl,filename){const a=document.createElement('a');a.href=dataUrl;a.download=filename;a.click();}
     function renderCopiesList(){
-      const list=document.getElementById('copiesList'); if(!list)return;
+      const list=document.getElementById('copiesList');if(!list)return;
       list.innerHTML=copies.map((copy,i)=>{
         const pct=Math.round(copy.scale*100);
-        return `<div class="copy-item"><label>複製 ${i+1}　サイズ:</label><input type="range" min="10" max="150" value="${pct}" oninput="setCopyScale(${i},this.value)" style="flex:1;accent-color:var(--rose);" /><span id="copyVal${i}" class="copy-size-val">${pct}%</span><button class="remove-btn" onclick="removeCopy(${i})">&#x2715;</button></div>`;
+        return`<div class="copy-item"><label>複製 ${i+1}　サイズ:</label><input type="range" min="10" max="150" value="${pct}" oninput="setCopyScale(${i},this.value)" style="flex:1;accent-color:var(--rose);" /><span id="copyVal${i}" class="copy-size-val">${pct}%</span><button class="remove-btn" onclick="removeCopy(${i})">&#x2715;</button></div>`;
       }).join('');
     }
-    function showPreview(src){ document.getElementById('previewArea').innerHTML=`<img src="${src}" alt="プレビュー">`; }
-    function show(id){ document.getElementById(id).classList.remove('hidden'); }
-    function hide(id){ document.getElementById(id).classList.add('hidden'); }
+    function showPreview(src){document.getElementById('previewArea').innerHTML=`<img src="${src}" alt="プレビュー">`;}
+    function show(id){document.getElementById(id).classList.remove('hidden');}
+    function hide(id){document.getElementById(id).classList.add('hidden');}
 
-    const editor=document.getElementById('compositeEditor');
-    editor.addEventListener('mousedown',e=>{ isDragging=true;dragStartX=e.clientX-fgEditorX;dragStartY=e.clientY-fgEditorY;editor.style.cursor='grabbing'; });
-    document.addEventListener('mousemove',e=>{ if(!isDragging)return;fgEditorX=e.clientX-dragStartX;fgEditorY=e.clientY-dragStartY;updateEditorTransform(); });
-    document.addEventListener('mouseup',()=>{ isDragging=false;editor.style.cursor='grab'; });
-    editor.addEventListener('touchstart',e=>{
+    // ドラッグ＆ピンチ（合成エディタ）
+    const compEditor=document.getElementById('compositeEditor');
+    compEditor.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX-fgEditorX;dragStartY=e.clientY-fgEditorY;compEditor.style.cursor='grabbing';});
+    document.addEventListener('mousemove',e=>{if(!isDragging)return;fgEditorX=e.clientX-dragStartX;fgEditorY=e.clientY-dragStartY;updateEditorTransform();});
+    document.addEventListener('mouseup',()=>{isDragging=false;compEditor.style.cursor='grab';});
+    compEditor.addEventListener('touchstart',e=>{
       if(e.touches.length===1){isDragging=true;dragStartX=e.touches[0].clientX-fgEditorX;dragStartY=e.touches[0].clientY-fgEditorY;}
       else if(e.touches.length===2){isDragging=false;pinchStartDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);pinchStartScale=fgEditorScale;}
       e.preventDefault();
     },{passive:false});
-    editor.addEventListener('touchmove',e=>{
+    compEditor.addEventListener('touchmove',e=>{
       e.preventDefault();
       if(e.touches.length===1&&isDragging){fgEditorX=e.touches[0].clientX-dragStartX;fgEditorY=e.touches[0].clientY-dragStartY;updateEditorTransform();}
       else if(e.touches.length===2){const dist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);fgEditorScale=Math.min(3.0,Math.max(0.1,pinchStartScale*dist/pinchStartDist));document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);updateEditorTransform();}
     },{passive:false});
-    editor.addEventListener('touchend',()=>{ isDragging=false; });
+    compEditor.addEventListener('touchend',()=>{isDragging=false;});
   </script>
 </body>
 </html>
