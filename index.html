@@ -61,6 +61,8 @@
     .spinner { width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.8s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
     .hidden { display:none !important; }
+    /* 自動調整バッジ */
+    #adjBadge { font-size:0.72rem; color:#8a7a76; background:#f5f0eb; border-radius:8px; padding:6px 10px; margin-bottom:10px; display:none; line-height:1.5; }
     .copy-item { display:flex; align-items:center; gap:8px; background:#fdf7f5; border:1.5px solid #e0d5ce; border-radius:12px; padding:8px 12px; margin-bottom:8px; }
     .copy-item label { font-size:0.72rem; color:#8a7a76; white-space:nowrap; }
     .copy-item input[type="range"] { flex:1; accent-color:var(--rose); }
@@ -68,27 +70,12 @@
     .copy-item .remove-btn { width:24px; height:24px; border-radius:50%; border:1.5px solid #e0d5ce; background:#fff; color:#b0a09a; cursor:pointer; font-size:0.85rem; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
     .add-copy-btn { width:100%; padding:10px; background:none; border:1.5px dashed #e0d5ce; border-radius:12px; color:#b0a09a; font-size:0.82rem; font-weight:700; cursor:pointer; margin-bottom:10px; transition:all 0.2s; }
     .add-copy-btn:hover { border-color:var(--rose); color:var(--rose); }
-
-    /* ── 消しゴムモーダル ── */
-    #eraserModal {
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.93); z-index:2000;
-      display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px;
-    }
+    /* 消しゴムモーダル */
+    #eraserModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.93); z-index:2000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; }
     #eraserModal p { color:#ccc; font-size:0.82rem; margin-bottom:10px; text-align:center; }
-    #eraserCanvasWrap {
-      position:relative; max-width:min(100%,440px); max-height:60vh;
-      background-image:linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%),
-                       linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%);
-      background-size:12px 12px; background-position:0 0,6px 6px;
-      border-radius:12px; overflow:hidden;
-    }
+    #eraserCanvasWrap { position:relative; max-width:min(100%,440px); max-height:60vh; background-image:linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%),linear-gradient(45deg,#555 25%,transparent 25%,transparent 75%,#555 75%); background-size:12px 12px; background-position:0 0,6px 6px; border-radius:12px; overflow:hidden; }
     #eraserCanvas { display:block; max-width:100%; max-height:60vh; cursor:crosshair; touch-action:none; }
-    #eraserCursor {
-      position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,0.8);
-      pointer-events:none; transform:translate(-50%,-50%);
-      background:rgba(232,84,106,0.25);
-    }
+    #eraserCursor { position:absolute; border-radius:50%; border:2px solid rgba(255,255,255,0.8); pointer-events:none; transform:translate(-50%,-50%); background:rgba(232,84,106,0.25); }
     .eraser-controls { margin-top:14px; width:100%; max-width:440px; display:flex; flex-direction:column; gap:10px; }
     .eraser-controls .row { display:flex; align-items:center; gap:10px; }
     .eraser-controls label { color:#ccc; font-size:0.78rem; white-space:nowrap; }
@@ -101,7 +88,6 @@
 </head>
 <body>
 
-  <!-- ① 背景削除カード -->
   <div class="card" style="margin-bottom:16px;">
     <div style="text-align:center;margin-bottom:20px;">
       <h1>withdoux picture</h1>
@@ -131,7 +117,6 @@
     <p style="text-align:center;color:#c5b8b0;font-size:0.7rem;margin-top:20px;">Powered by AI Background Removal（無制限・無料）</p>
   </div>
 
-  <!-- ② 背景合成カード -->
   <div id="compositeSection" class="card hidden">
     <div class="section-divider">② 背景合成</div>
     <div class="genre-tabs">
@@ -142,7 +127,6 @@
       <button class="genre-tab" onclick="selectGenre(this,'classic')">クラシカル</button>
     </div>
     <div class="preset-scroll" id="presetScroll"></div>
-    <!-- 背景消しゴムボタン -->
     <button id="bgEraserBtn" class="btn btn-eraser" style="margin-bottom:10px;" onclick="openEraser('bg')">🧹 背景のケーキを消す</button>
     <button class="btn btn-ghost" style="margin-bottom:4px;" onclick="document.getElementById('bgFileInput').click()">🖼 背景画像をアップロード</button>
     <div class="section-divider">位置・サイズを調整</div>
@@ -158,8 +142,10 @@
     <div id="copiesList"></div>
     <button id="addCopyBtn" class="add-copy-btn hidden" onclick="addCopy()">＋ 複製を追加</button>
     <div class="btn-stack">
-      <button id="compositeBtn" class="btn btn-download" onclick="runComposite()">💾 保存する</button>
+      <button id="compositeBtn" class="btn btn-download" onclick="runComposite()">✨ AI自動調整して保存</button>
     </div>
+    <!-- 自動調整結果バッジ -->
+    <div id="adjBadge"></div>
     <div id="compositeResultArea" class="hidden">
       <div class="section-divider">合成結果</div>
       <img id="compositeResultImg" src="" alt="合成結果" style="width:100%;border-radius:14px;border:2px solid #e0d5ce;display:block;margin-bottom:12px;" />
@@ -211,37 +197,85 @@
     const COPY_OFFSETS=[{dx:0.15,dy:0.10},{dx:-0.12,dy:0.18},{dx:0.06,dy:-0.16}];
 
     // ── 消しゴム状態 ──
-    let eraserTarget=null;
-    let brushSize=20;
-    let isErasing=false;
-    let eraserHistory=[];
+    let eraserTarget=null,brushSize=20,isErasing=false,eraserHistory=[];
 
-    // ── 消しゴム：開く ──
+    // ─────────────────────────────────────────────
+    // 画像分析：平均色・明るさ・色温度を返す
+    // ─────────────────────────────────────────────
+    function analyzeColors(ctx,x,y,w,h){
+      const d=ctx.getImageData(x,y,w,h).data;
+      let r=0,g=0,b=0,count=0;
+      for(let i=0;i<d.length;i+=16){ // 4ピクセルおきにサンプリング
+        if(d[i+3]>64){ r+=d[i];g+=d[i+1];b+=d[i+2];count++; }
+      }
+      if(!count)return{r:128,g:128,b:128,brightness:128,warmth:0};
+      r/=count;g/=count;b/=count;
+      const brightness=r*0.299+g*0.587+b*0.114;
+      const warmth=(r-b)/255; // 正=暖色、負=寒色
+      return{r,g,b,brightness,warmth};
+    }
+
+    // ─────────────────────────────────────────────
+    // スマート自動調整：背景に合わせたフィルター計算
+    // ─────────────────────────────────────────────
+    function calcSmartFilter(bgCtx,fgImg,imgW,imgH){
+      // 背景の中央エリアを分析
+      const bg=analyzeColors(bgCtx,imgW*0.1,imgH*0.1,imgW*0.8,imgH*0.8);
+
+      // 前景を仮キャンバスに描画して分析
+      const tmp=document.createElement('canvas');
+      tmp.width=fgImg.naturalWidth;tmp.height=fgImg.naturalHeight;
+      const tCtx=tmp.getContext('2d');
+      tCtx.drawImage(fgImg,0,0);
+      const fg=analyzeColors(tCtx,0,0,tmp.width,tmp.height);
+
+      // ① 明るさ補正（背景に近づける）
+      const rawBright=bg.brightness/Math.max(fg.brightness,1);
+      const brightness=Math.max(0.75,Math.min(1.45,rawBright));
+
+      // ② コントラスト（食品写真向けに少し強調）
+      const contrast=1.06;
+
+      // ③ 彩度（背景の色鮮やかさに合わせる）
+      const bgSat=Math.sqrt((bg.r-bg.g)**2+(bg.g-bg.b)**2+(bg.b-bg.r)**2)/255;
+      const saturate=0.92+bgSat*0.6;
+
+      // ④ 色温度（背景の暖色/寒色に合わせて僅かにシフト）
+      const warmDiff=bg.warmth-fg.warmth;
+      const hueRotate=warmDiff>0.05?-8:warmDiff<-0.05?8:0;
+
+      // ⑤ 自然な傾き（暖色背景=時計回り、寒色=反時計回り、最大±4°）
+      const tilt=Math.max(-4,Math.min(4,bg.warmth*6));
+
+      // ⑥ 影を入れると馴染む（canvas shadowを利用）
+      const shadowAlpha=Math.min(0.35,bg.brightness/300);
+
+      const filterStr=`brightness(${brightness.toFixed(2)}) contrast(${contrast}) saturate(${saturate.toFixed(2)})${hueRotate?` hue-rotate(${hueRotate}deg)`:''}`;
+
+      return{filterStr,tilt,shadowAlpha,brightness,saturate,hueRotate,tilt};
+    }
+
+    // ─────────────────────────────────────────────
+    // 消しゴム：開く
+    // ─────────────────────────────────────────────
     window.openEraser=async(target)=>{
       const bgUrl=customBgUrl||selectedBgImageUrl;
       if(target==='fg'&&!processedBlobUrl){alert('先に背景削除を実行してください。');return;}
       if(target==='bg'&&!bgUrl){alert('先に背景を選択してください。');return;}
-      eraserTarget=target;
-      eraserHistory=[];
-
+      eraserTarget=target;eraserHistory=[];
       const canvas=document.getElementById('eraserCanvas');
       const ctx=canvas.getContext('2d');
       const imgUrl=target==='fg'?processedBlobUrl:bgUrl;
-
       const img=new Image();
       if(!imgUrl.startsWith('blob:')&&!imgUrl.startsWith('data:'))img.crossOrigin='anonymous';
       img.onload=()=>{
-        canvas.width=img.naturalWidth;
-        canvas.height=img.naturalHeight;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.drawImage(img,0,0);
+        canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+        ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0);
         eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
         document.getElementById('eraserModal').classList.remove('hidden');
       };
       img.src=imgUrl;
     };
-
-    // ── 消しゴム：閉じる ──
     window.closeEraser=(save)=>{
       if(save){
         const canvas=document.getElementById('eraserCanvas');
@@ -249,112 +283,63 @@
           const url=URL.createObjectURL(blob);
           if(eraserTarget==='fg'){
             if(processedBlobUrl)URL.revokeObjectURL(processedBlobUrl);
-            processedBlobUrl=url;
-            showPreview(processedBlobUrl);
+            processedBlobUrl=url;showPreview(processedBlobUrl);
             document.getElementById('fgEditorImg').src=processedBlobUrl;
-          } else {
-            customBgUrl=url; selectedBgImageUrl='';
+          }else{
+            customBgUrl=url;selectedBgImageUrl='';
             document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));
-            updateEditorBg(customBgUrl);
-            setStatus('背景の編集完了 ✅','done');
+            updateEditorBg(customBgUrl);setStatus('背景の編集完了 ✅','done');
           }
         },'image/png');
       }
       document.getElementById('eraserModal').classList.add('hidden');
     };
-
     window.updateBrushSize=(val)=>{
-      brushSize=+val;
-      document.getElementById('brushSizeVal').textContent=val;
-      document.getElementById('eraserCursor').style.width=brushSize*2+'px';
-      document.getElementById('eraserCursor').style.height=brushSize*2+'px';
+      brushSize=+val;document.getElementById('brushSizeVal').textContent=val;
+      const c=document.getElementById('eraserCursor');c.style.width=brushSize*2+'px';c.style.height=brushSize*2+'px';
     };
-
     window.undoEraser=()=>{
       if(eraserHistory.length<=1)return;
       eraserHistory.pop();
       const canvas=document.getElementById('eraserCanvas');
-      const ctx=canvas.getContext('2d');
-      ctx.putImageData(eraserHistory[eraserHistory.length-1],0,0);
+      canvas.getContext('2d').putImageData(eraserHistory[eraserHistory.length-1],0,0);
     };
-
     function eraseAt(canvas,x,y){
       const ctx=canvas.getContext('2d');
       ctx.globalCompositeOperation='destination-out';
-      ctx.beginPath();
-      ctx.arc(x,y,brushSize,0,Math.PI*2);
-      ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,brushSize,0,Math.PI*2);ctx.fill();
       ctx.globalCompositeOperation='source-over';
     }
-
-    function getCanvasPos(canvas,clientX,clientY){
-      const rect=canvas.getBoundingClientRect();
-      return{x:(clientX-rect.left)*(canvas.width/rect.width),y:(clientY-rect.top)*(canvas.height/rect.height)};
+    function getCanvasPos(canvas,cx,cy){
+      const r=canvas.getBoundingClientRect();
+      return{x:(cx-r.left)*(canvas.width/r.width),y:(cy-r.top)*(canvas.height/r.height)};
     }
-
-    // マウス操作
     (()=>{
       const canvas=document.getElementById('eraserCanvas');
       const cursor=document.getElementById('eraserCursor');
-
-      canvas.addEventListener('mousedown',e=>{
-        isErasing=true;
-        const p=getCanvasPos(canvas,e.clientX,e.clientY);
-        eraseAt(canvas,p.x,p.y);
-      });
+      canvas.addEventListener('mousedown',e=>{isErasing=true;const p=getCanvasPos(canvas,e.clientX,e.clientY);eraseAt(canvas,p.x,p.y);});
       canvas.addEventListener('mousemove',e=>{
         const rect=canvas.getBoundingClientRect();
-        cursor.style.display='block';
-        cursor.style.left=(e.clientX-rect.left)+'px';
-        cursor.style.top=(e.clientY-rect.top)+'px';
-        cursor.style.width=brushSize*2*(rect.width/canvas.width)+'px';
-        cursor.style.height=brushSize*2*(rect.height/canvas.height)+'px';
+        cursor.style.display='block';cursor.style.left=(e.clientX-rect.left)+'px';cursor.style.top=(e.clientY-rect.top)+'px';
+        const s=brushSize*2;cursor.style.width=s*(rect.width/canvas.width)+'px';cursor.style.height=s*(rect.height/canvas.height)+'px';
         if(!isErasing)return;
-        const p=getCanvasPos(canvas,e.clientX,e.clientY);
-        eraseAt(canvas,p.x,p.y);
+        eraseAt(canvas,getCanvasPos(canvas,e.clientX,e.clientY).x,getCanvasPos(canvas,e.clientX,e.clientY).y);
       });
       canvas.addEventListener('mouseleave',()=>{cursor.style.display='none';});
       document.addEventListener('mouseup',()=>{
-        if(isErasing){
-          isErasing=false;
-          const ctx=canvas.getContext('2d');
-          eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
-          if(eraserHistory.length>30)eraserHistory.shift();
-        }
+        if(isErasing){isErasing=false;const ctx=canvas.getContext('2d');eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));if(eraserHistory.length>30)eraserHistory.shift();}
       });
-      // タッチ操作
-      canvas.addEventListener('touchstart',e=>{
-        e.preventDefault();
-        isErasing=true;
-        const t=e.touches[0];
-        const p=getCanvasPos(canvas,t.clientX,t.clientY);
-        eraseAt(canvas,p.x,p.y);
-      },{passive:false});
-      canvas.addEventListener('touchmove',e=>{
-        e.preventDefault();
-        if(!isErasing)return;
-        const t=e.touches[0];
-        const p=getCanvasPos(canvas,t.clientX,t.clientY);
-        eraseAt(canvas,p.x,p.y);
-      },{passive:false});
-      canvas.addEventListener('touchend',()=>{
-        isErasing=false;
-        const ctx=canvas.getContext('2d');
-        eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));
-        if(eraserHistory.length>30)eraserHistory.shift();
-      });
+      canvas.addEventListener('touchstart',e=>{e.preventDefault();isErasing=true;const t=e.touches[0];eraseAt(canvas,getCanvasPos(canvas,t.clientX,t.clientY).x,getCanvasPos(canvas,t.clientX,t.clientY).y);},{passive:false});
+      canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!isErasing)return;const t=e.touches[0];eraseAt(canvas,getCanvasPos(canvas,t.clientX,t.clientY).x,getCanvasPos(canvas,t.clientX,t.clientY).y);},{passive:false});
+      canvas.addEventListener('touchend',()=>{isErasing=false;const ctx=canvas.getContext('2d');eraserHistory.push(ctx.getImageData(0,0,canvas.width,canvas.height));if(eraserHistory.length>30)eraserHistory.shift();});
     })();
 
-    // ── メイン機能 ──
-    window.selectGenre=(btn,genre)=>{
-      document.querySelectorAll('.genre-tab').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active'); customBgUrl=''; renderPresetImages(genre);
-    };
-    window.selectPresetImage=(el,url)=>{
-      document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));
-      if(el)el.classList.add('selected'); selectedBgImageUrl=url; customBgUrl=''; updateEditorBg(url);
-    };
-    window.setRatio=(r,btn)=>{ selectedRatio=r; document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); };
+    // ─────────────────────────────────────────────
+    // メイン機能
+    // ─────────────────────────────────────────────
+    window.selectGenre=(btn,genre)=>{ document.querySelectorAll('.genre-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');customBgUrl='';renderPresetImages(genre); };
+    window.selectPresetImage=(el,url)=>{ document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));if(el)el.classList.add('selected');selectedBgImageUrl=url;customBgUrl='';updateEditorBg(url); };
+    window.setRatio=(r,btn)=>{ selectedRatio=r;document.querySelectorAll('.ratio-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active'); };
     window.resetAll=()=>{
       base64Image='';processedBlobUrl='';compositeDataUrl='';customBgUrl='';selectedBgImageUrl='';
       document.getElementById('previewArea').innerHTML='<div class="placeholder-text"><span style="font-size:2rem">🎂</span><span>ここに画像が表示されます</span></div>';
@@ -366,8 +351,7 @@
       if(!input.files||!input.files[0])return;
       const reader=new FileReader();
       reader.onload=(e)=>{
-        base64Image=e.target.result;showPreview(base64Image);
-        show('resetBtn');show('magicBtn');
+        base64Image=e.target.result;showPreview(base64Image);show('resetBtn');show('magicBtn');
         document.getElementById('magicBtn').innerHTML='✨ 魔法をかける（背景削除）';
         document.getElementById('magicBtn').disabled=false;
         hide('fgEraserBtn');hide('downloadBtn');hide('compositeSection');hide('addCopyBtn');
@@ -379,7 +363,7 @@
     window.handleBgFile=(input)=>{
       if(!input.files||!input.files[0])return;
       const reader=new FileReader();
-      reader.onload=(e)=>{ customBgUrl=e.target.result;selectedBgImageUrl=''; document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected')); updateEditorBg(customBgUrl);setStatus('背景画像の準備完了 ✅','done'); };
+      reader.onload=(e)=>{customBgUrl=e.target.result;selectedBgImageUrl='';document.querySelectorAll('.preset-img-btn').forEach(b=>b.classList.remove('selected'));updateEditorBg(customBgUrl);setStatus('背景画像の準備完了 ✅','done');};
       reader.readAsDataURL(input.files[0]);
     };
     window.runMagic=async()=>{
@@ -388,16 +372,14 @@
       btn.disabled=true;btn.innerHTML='<div class="spinner"></div> AI処理中…';
       try{
         const{removeBackground}=await import('https://esm.sh/@imgly/background-removal@1.4.5');
-        const res=await fetch(base64Image);
-        const blob=await res.blob();
+        const res=await fetch(base64Image);const blob=await res.blob();
         const resultBlob=await removeBackground(blob);
         if(processedBlobUrl)URL.revokeObjectURL(processedBlobUrl);
         processedBlobUrl=URL.createObjectURL(resultBlob);
         showPreview(processedBlobUrl);
         setStatus('完成！🎉 必要なら消しゴムで修正できます','done');
         show('fgEraserBtn');show('downloadBtn');show('compositeSection');show('addCopyBtn');hide('magicBtn');
-        renderPresetImages('simple');
-        initEditor(processedBlobUrl);
+        renderPresetImages('simple');initEditor(processedBlobUrl);
         document.getElementById('compositeSection').scrollIntoView({behavior:'smooth',block:'start'});
       }catch(e){alert('❌ エラー: '+e.message);setStatus('エラーが発生しました','');}
       btn.disabled=false;btn.innerHTML='✨ 魔法をかける（背景削除）';
@@ -407,24 +389,40 @@
       const a=document.createElement('a');a.href=processedBlobUrl;a.download=`withdoux_${Date.now()}.png`;a.click();
       setStatus('ダウンロード完了 ✅','done');
     };
-    window.adjustScale=(delta)=>{ fgEditorScale=Math.min(3.0,Math.max(0.1,fgEditorScale+delta)); document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);updateEditorTransform(); };
+    window.adjustScale=(delta)=>{ fgEditorScale=Math.min(3.0,Math.max(0.1,fgEditorScale+delta));document.getElementById('scaleRange').value=Math.round(fgEditorScale*100);updateEditorTransform(); };
     window.setScaleFromSlider=(val)=>{ fgEditorScale=val/100;updateEditorTransform(); };
     window.resetEditorTransform=()=>{ fgEditorX=0;fgEditorY=0;fgEditorScale=1.0;document.getElementById('scaleRange').value=100;updateEditorTransform(); };
+
+    // ─────────────────────────────────────────────
+    // AI自動調整合成
+    // ─────────────────────────────────────────────
     window.runComposite=async()=>{
       if(!processedBlobUrl){alert('先に背景削除を実行してください。');return;}
       const bgUrl=customBgUrl||selectedBgImageUrl;
       if(!bgUrl){alert('背景を選択してください。');return;}
       const btn=document.getElementById('compositeBtn');
-      btn.disabled=true;btn.innerHTML='<div class="spinner"></div> 合成・保存中…';setStatus('合成中…','processing');
+      btn.disabled=true;btn.innerHTML='<div class="spinner"></div> AI調整中…';
+      setStatus('背景を分析してAI自動調整中…','processing');
+
       let imgW,imgH;
-      if(selectedRatio==='1:1'){imgW=1000;imgH=1000;}else if(selectedRatio==='4:5'){imgW=800;imgH=1000;}else{imgW=1600;imgH=900;}
+      if(selectedRatio==='1:1'){imgW=1000;imgH=1000;}
+      else if(selectedRatio==='4:5'){imgW=800;imgH=1000;}
+      else{imgW=1600;imgH=900;}
+
       try{
         const canvas=document.createElement('canvas');canvas.width=imgW;canvas.height=imgH;
         const ctx=canvas.getContext('2d');
+
+        // ① 背景を描画
         const bgImg=await loadImage(bgUrl);
         const bgScale=Math.max(imgW/bgImg.naturalWidth,imgH/bgImg.naturalHeight);
         const bw=bgImg.naturalWidth*bgScale,bh=bgImg.naturalHeight*bgScale;
         ctx.drawImage(bgImg,(imgW-bw)/2,(imgH-bh)/2,bw,bh);
+
+        // ② 背景を分析 → スマートフィルター計算
+        const{filterStr,tilt,shadowAlpha}=calcSmartFilter(ctx,await loadImage(processedBlobUrl),imgW,imgH);
+
+        // ③ 前景を描画（自動調整フィルター + 影 + 自然な傾き適用）
         const fgImg=await loadImage(processedBlobUrl);
         const editorRect=document.getElementById('compositeEditor').getBoundingClientRect();
         const baseW=imgW*0.8,aspect=fgImg.naturalHeight/fgImg.naturalWidth;
@@ -432,20 +430,57 @@
         const overlayH=Math.round(overlayW*aspect);
         const offsetX=Math.round(fgEditorX/editorRect.width*imgW);
         const offsetY=Math.round(fgEditorY/editorRect.height*imgH);
-        ctx.drawImage(fgImg,(imgW-overlayW)/2+offsetX,(imgH-overlayH)/2+offsetY,overlayW,overlayH);
+        const cx=(imgW-overlayW)/2+offsetX+overlayW/2;
+        const cy=(imgH-overlayH)/2+offsetY+overlayH/2;
+
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(tilt*Math.PI/180);
+        // 影（自然な落ち影）
+        ctx.shadowColor=`rgba(0,0,0,${shadowAlpha})`;
+        ctx.shadowBlur=overlayW*0.04;
+        ctx.shadowOffsetX=overlayW*0.01;
+        ctx.shadowOffsetY=overlayW*0.03;
+        // フィルター適用
+        ctx.filter=filterStr;
+        ctx.drawImage(fgImg,-overlayW/2,-overlayH/2,overlayW,overlayH);
+        ctx.filter='none';
+        ctx.shadowColor='transparent';
+        ctx.restore();
+
+        // ④ 複製も同じフィルターで描画
         copies.forEach((copy,i)=>{
           const off=COPY_OFFSETS[i%COPY_OFFSETS.length];
           const cW=Math.min(Math.round(baseW*copy.scale),imgW),cH=Math.round(cW*aspect);
-          ctx.drawImage(fgImg,(imgW-cW)/2+offsetX+Math.round(off.dx*imgW),(imgH-cH)/2+offsetY+Math.round(off.dy*imgH),cW,cH);
+          const ccx=(imgW-cW)/2+offsetX+Math.round(off.dx*imgW)+cW/2;
+          const ccy=(imgH-cH)/2+offsetY+Math.round(off.dy*imgH)+cH/2;
+          ctx.save();
+          ctx.translate(ccx,ccy);
+          ctx.rotate(tilt*Math.PI/180);
+          ctx.shadowColor=`rgba(0,0,0,${shadowAlpha})`;ctx.shadowBlur=cW*0.04;ctx.shadowOffsetY=cW*0.03;
+          ctx.filter=filterStr;
+          ctx.drawImage(fgImg,-cW/2,-cH/2,cW,cH);
+          ctx.filter='none';ctx.shadowColor='transparent';
+          ctx.restore();
         });
+
         const dataUrl=canvas.toDataURL('image/png');compositeDataUrl=dataUrl;
         document.getElementById('compositeResultImg').src=dataUrl;show('compositeResultArea');
         triggerDownload(dataUrl,`withdoux_${Date.now()}.png`);
-        setStatus('保存しました！🎉','done');
+        setStatus('AI自動調整して保存しました！🎉','done');
+
+        // 調整内容バッジ表示
+        const adj=document.getElementById('adjBadge');
+        const brightPct=Math.round((parseFloat(filterStr.match(/brightness\(([^)]+)\)/)[1])-1)*100);
+        const tiltDeg=tilt.toFixed(1);
+        adj.style.display='block';
+        adj.innerHTML=`✨ AI自動調整結果：明るさ${brightPct>=0?'+':''}${brightPct}%　傾き${tiltDeg}°　影・コントラスト補正済み`;
+
         document.getElementById('compositeResultArea').scrollIntoView({behavior:'smooth',block:'start'});
       }catch(e){alert('❌ 合成エラー: '+e.message);setStatus('合成失敗','');}
-      btn.disabled=false;btn.innerHTML='💾 保存する';
+      btn.disabled=false;btn.innerHTML='✨ AI自動調整して保存';
     };
+
     window.addCopy=()=>{ if(copies.length>=3){alert('複製は最大3個まで追加できます。');return;} copies.push({scale:0.5});renderCopiesList(); };
     window.removeCopy=(idx)=>{ copies.splice(idx,1);renderCopiesList(); };
     window.setCopyScale=(idx,val)=>{ copies[idx].scale=val/100;const el=document.getElementById('copyVal'+idx);if(el)el.textContent=val+'%'; };
@@ -495,7 +530,6 @@
     function show(id){document.getElementById(id).classList.remove('hidden');}
     function hide(id){document.getElementById(id).classList.add('hidden');}
 
-    // ドラッグ＆ピンチ（合成エディタ）
     const compEditor=document.getElementById('compositeEditor');
     compEditor.addEventListener('mousedown',e=>{isDragging=true;dragStartX=e.clientX-fgEditorX;dragStartY=e.clientY-fgEditorY;compEditor.style.cursor='grabbing';});
     document.addEventListener('mousemove',e=>{if(!isDragging)return;fgEditorX=e.clientX-dragStartX;fgEditorY=e.clientY-dragStartY;updateEditorTransform();});
